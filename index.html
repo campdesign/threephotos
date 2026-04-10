@@ -808,26 +808,52 @@
     /* ─── DEV PANEL ─── */
     #devPanel {
       position: fixed;
-      bottom: 0; left: 0; right: 0;
+      bottom: 20px;
+      right: 20px;
       z-index: 9999;
-      max-height: 50vh;
-      overflow-y: auto;
-      background: #0d0d10;
-      border-top: 2px solid #c9a96e;
       font-family: var(--sans);
-      font-size: 12px;
+      font-size: 11px;
     }
-    #devPanelInner { padding: 14px 20px; }
-    .dev-header {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; margin-bottom: 10px; flex-wrap: wrap;
+    .dev-toggle {
+      background: var(--gold);
+      color: var(--black);
+      padding: 7px 14px;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-align: right;
+      user-select: none;
     }
-    .dev-title { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
-    .dev-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    #devPanelInner {
+      background: #0d0d10;
+      border: 1px solid var(--gold);
+      border-top: none;
+      width: 320px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    #devPanelInner.dev-collapsed { display: none; }
+
+    .dev-section {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dev-section:last-child { border-bottom: none; }
+    .dev-section-title {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .dev-actions { display: flex; gap: 6px; flex-wrap: wrap; }
     .dev-btn {
-      background: var(--surface); border: 1px solid var(--border);
-      color: var(--dim); padding: 5px 12px; font-size: 10px;
-      letter-spacing: 0.08em; cursor: pointer; font-family: var(--sans);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--dim); padding: 5px 10px;
+      font-size: 10px; letter-spacing: 0.06em;
+      cursor: pointer; font-family: var(--sans);
       text-transform: uppercase; transition: all 0.2s;
     }
     .dev-btn:hover { border-color: var(--border-hi); color: var(--white); }
@@ -835,35 +861,37 @@
     .dev-btn-gold:hover { background: var(--gold-dim); }
     .dev-btn-red { border-color: rgba(139,58,58,0.4); color: #c47070; }
     .dev-btn-red:hover { background: rgba(139,58,58,0.15); }
-    .dev-count { font-size: 10px; color: var(--muted); margin-bottom: 12px; letter-spacing: 0.06em; }
-    .dev-empty { color: var(--muted); font-size: 11px; font-style: italic; }
-    .dev-entries { display: flex; flex-direction: column; gap: 8px; }
-    .dev-entry {
-      display: flex; gap: 12px; align-items: flex-start;
-      background: var(--card); border: 1px solid var(--border);
-      padding: 10px 12px;
+    .dev-count {
+      font-size: 10px; color: var(--muted);
+      margin-top: 8px; letter-spacing: 0.06em;
     }
-    .dev-entry-photos { display: flex; gap: 4px; flex-shrink: 0; }
+    .dev-empty { color: var(--muted); font-size: 10px; font-style: italic; }
+    .dev-entries { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+    .dev-entry {
+      display: flex; gap: 8px; align-items: flex-start;
+      background: var(--card); border: 1px solid var(--border); padding: 8px;
+    }
+    .dev-entry-photos { display: flex; gap: 3px; flex-shrink: 0; }
     .dev-thumb {
-      width: 48px; height: 36px; object-fit: cover;
+      width: 36px; height: 27px; object-fit: cover;
       filter: brightness(0.8); border: 1px solid var(--border);
     }
     .dev-entry-info {
-      flex: 1; display: flex; flex-direction: column; gap: 3px;
-      min-width: 0;
+      flex: 1; display: flex; flex-direction: column;
+      gap: 2px; min-width: 0;
     }
-    .dev-entry-info strong { color: var(--white); font-size: 12px; font-weight: 400; }
-    .dev-entry-info span { color: var(--muted); font-size: 10px; }
-    .dev-entry-info em { color: var(--dim); font-size: 10px; font-style: italic; }
-    .dev-entry-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .dev-entry-info strong { color: var(--white); font-size: 11px; font-weight: 400; }
+    .dev-entry-info span  { color: var(--muted); font-size: 10px; }
+    .dev-entry-info em    { color: var(--dim); font-size: 10px; font-style: italic; }
+    .dev-entry-actions { display: flex; gap: 4px; flex-shrink: 0; }
 
     /* Dev edit modal */
     .dev-edit-backdrop {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9600;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9800;
     }
     .dev-edit-modal {
       position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
-      z-index: 9700; background: var(--card); border: 1px solid var(--border);
+      z-index: 9900; background: var(--card); border: 1px solid var(--border);
       padding: 28px; width: min(560px, 92vw); max-height: 85vh; overflow-y: auto;
       display: flex; flex-direction: column; gap: 10px;
     }
@@ -1205,7 +1233,7 @@
 <script>
   // ─── SUPABASE
   const SB_URL = 'https://fzeosiuwbhjnfzrobhkq.supabase.co';
-  const SB_KEY = 'sb_publishable_SfXd4o2aeYdsoM0vqhBaRQ_azhj6Axm';
+  const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6ZW9zaXV3YmhqbmZ6cm9iaGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4NDQ4MTYsImV4cCI6MjA5MTQyMDgxNn0.fi5UC3ccIPEfVsv3E9lz_00JdHinYJaDZX0wOqSmQp4';
 
   async function sbFetch(path, options = {}) {
     const res = await fetch(`${SB_URL}/rest/v1${path}`, {
@@ -1721,9 +1749,31 @@
     btn.disabled = false;
     btn.textContent = 'Add to Three Photos';
 
-    // Run scatter animation before transitioning away
+    // Black out the submit screen before animation runs
+    const submitScreen = document.getElementById('submitScreen');
+    submitScreen.style.background = 'var(--black)';
+    submitScreen.style.transition = 'none';
+    // Hide all submit content so only black + canvas shows
+    const submitBody   = document.querySelector('.submit-body');
+    const submitHeader = document.querySelector('.submit-header');
+    const submitFooter = document.querySelector('.submit-footer');
+    if (submitBody)   submitBody.style.opacity   = '0';
+    if (submitHeader) submitHeader.style.opacity = '0';
+    if (submitFooter) submitFooter.style.opacity = '0';
+
+    // Brief pause so black bg registers before animation starts
+    await new Promise(r => setTimeout(r, 80));
+
+    // Run scatter animation
     const photoSrcs = draftPhotos.filter(Boolean);
     await runScatterAnimation(photoSrcs);
+
+    // Restore (doesn't matter much since we transition away, but clean up anyway)
+    if (submitBody)   submitBody.style.opacity   = '';
+    if (submitHeader) submitHeader.style.opacity = '';
+    if (submitFooter) submitFooter.style.opacity = '';
+    submitScreen.style.background  = '';
+    submitScreen.style.transition  = '';
 
     // Check milestone
     if (milestoneReached()) {
@@ -1841,122 +1891,279 @@
     rec.on = false;
   }
 
-  // ─── SCATTER ANIMATION
+  // ─── SHATTER ANIMATION
   function runScatterAnimation(srcs) {
     return new Promise(resolve => {
       const canvas = document.getElementById('scatterCanvas');
-      const ctx    = canvas.getContext('2d');
+      if (!canvas || !canvas.getContext) { resolve(); return; }
+
+      const ctx = canvas.getContext('2d');
       canvas.width  = window.innerWidth;
       canvas.height = window.innerHeight;
-
-      // Load all images first
-      let loaded = 0;
-      const imgs = srcs.map(src => {
-        const img = new Image();
-        img.onload = () => {
-          loaded++;
-          if (loaded === srcs.length) animate();
-        };
-        img.onerror = () => { loaded++; if (loaded === srcs.length) animate(); };
-        img.src = src;
-        return img;
-      });
-
-      // Each photo gets a particle with a unique trajectory
       const W = canvas.width, H = canvas.height;
       const cx = W / 2, cy = H / 2;
 
-      // Spread angles — roughly thirds of a circle, with gentle randomness
-      const baseAngles = [
-        -Math.PI * 0.65,  // upper left
-        -Math.PI * 0.18,  // upper right
-         Math.PI * 0.55,  // lower center
-      ];
+      // Safety timeout
+      const safety = setTimeout(() => {
+        ctx.clearRect(0, 0, W, H);
+        resolve();
+      }, 6000);
 
-      const particles = imgs.map((img, i) => {
-        const angle  = baseAngles[i] + (Math.random() - 0.5) * 0.4;
-        const speed  = 3.2 + Math.random() * 2.2;
-        const spin   = (Math.random() - 0.5) * 0.045;
-        const w      = Math.min(W * 0.28, 180);
-        const h      = w * 0.75;
-        // Start near center
-        const startX = cx - w / 2 + (Math.random() - 0.5) * 60;
-        const startY = cy - h / 2 + (Math.random() - 0.5) * 40;
-        return {
-          img, w, h,
-          x: startX, y: startY,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          rotation: (Math.random() - 0.5) * 0.3,
-          spin,
-          alpha: 1,
-          // Slight scale breathe
-          scale: 0.85 + Math.random() * 0.2,
-          delay: i * 6  // stagger start by a few frames
+      // Downscale images for performance
+      const MAX_W = 240;
+      let loaded = 0;
+      const imgCanvases = [];
+      const photoSrcs = srcs.slice(0, 3);
+
+      photoSrcs.forEach((src, i) => {
+        const img = new Image();
+        img.onload = () => {
+          const scale = Math.min(1, MAX_W / img.naturalWidth);
+          const oc = document.createElement('canvas');
+          oc.width  = Math.round(img.naturalWidth  * scale);
+          oc.height = Math.round(img.naturalHeight * scale);
+          oc.getContext('2d').drawImage(img, 0, 0, oc.width, oc.height);
+          imgCanvases[i] = oc;
+          loaded++;
+          if (loaded === photoSrcs.length) buildScene();
         };
+        img.onerror = () => {
+          imgCanvases[i] = null;
+          loaded++;
+          if (loaded === photoSrcs.length) buildScene();
+        };
+        img.src = src;
       });
 
-      let frame = 0;
-      const DURATION = 120; // frames
+      // ── FRAGMENT GENERATION
+      // Voronoi-like irregular shards using random polygon clipping
+      function makeFragments(imgCanvas, count) {
+        if (!imgCanvas) return [];
+        const iw = imgCanvas.width, ih = imgCanvas.height;
+        const fragments = [];
 
-      function animate() {
-        frame++;
-        ctx.clearRect(0, 0, W, H);
+        // Seed random points for irregular shards
+        const seeds = Array.from({length: count}, () => ({
+          x: Math.random() * iw,
+          y: Math.random() * ih
+        }));
 
-        // Subtle dark vignette overlay that deepens as photos fade
-        const vigAlpha = Math.min(0.6, (frame / DURATION) * 0.7);
-        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * 0.7);
-        grad.addColorStop(0, `rgba(10,10,11,0)`);
-        grad.addColorStop(1, `rgba(10,10,11,${vigAlpha})`);
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, W, H);
+        // Each fragment is a triangle/quad defined by nearby seed points
+        // Simple approach: divide into roughly triangular cells
+        const cols = Math.ceil(Math.sqrt(count * 1.6));
+        const rows = Math.ceil(count / cols);
+        const cw = iw / cols, ch = ih / rows;
 
-        let allDone = true;
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            // Jitter the corners for irregular shapes
+            const jx = () => (Math.random() - 0.5) * cw * 0.6;
+            const jy = () => (Math.random() - 0.5) * ch * 0.6;
 
-        particles.forEach(p => {
-          if (frame < p.delay) { allDone = false; return; }
-          const t = (frame - p.delay) / (DURATION - p.delay);
+            const x0 = c * cw, y0 = r * ch;
+            const x1 = x0 + cw, y1 = y0 + ch;
 
-          // Ease in fast, drift and fade out slow
-          p.x += p.vx * (1 - t * 0.7);
-          p.y += p.vy * (1 - t * 0.7);
-          p.vy += 0.04; // very slight gravity
-          p.rotation += p.spin;
+            // Two triangles per cell for more shard-like feel
+            const polys = [
+              [
+                {x: x0 + jx(), y: y0 + jy()},
+                {x: x1 + jx(), y: y0 + jy()},
+                {x: x0 + jx(), y: y1 + jy()}
+              ],
+              [
+                {x: x1 + jx(), y: y0 + jy()},
+                {x: x1 + jx(), y: y1 + jy()},
+                {x: x0 + jx(), y: y1 + jy()}
+              ]
+            ];
 
-          // Fade: hold full opacity briefly then dissolve
-          p.alpha = t < 0.3 ? 1 : 1 - ((t - 0.3) / 0.7);
-          p.alpha = Math.max(0, p.alpha);
+            polys.forEach(poly => {
+              // Fragment center
+              const fcx = poly.reduce((s, p) => s + p.x, 0) / poly.length;
+              const fcy = poly.reduce((s, p) => s + p.y, 0) / poly.length;
 
-          if (p.alpha > 0) allDone = false;
-
-          ctx.save();
-          ctx.globalAlpha = p.alpha;
-          ctx.translate(p.x + p.w / 2, p.y + p.h / 2);
-          ctx.rotate(p.rotation);
-          ctx.scale(p.scale, p.scale);
-
-          // Soft shadow
-          ctx.shadowColor = 'rgba(0,0,0,0.6)';
-          ctx.shadowBlur  = 18;
-
-          // Draw image
-          ctx.drawImage(p.img, -p.w / 2, -p.h / 2, p.w, p.h);
-
-          // Subtle desaturating overlay as it fades
-          if (p.alpha < 0.6) {
-            ctx.fillStyle = `rgba(10,10,11,${(0.6 - p.alpha) * 0.5})`;
-            ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+              fragments.push({
+                poly,
+                cx: fcx, cy: fcy,
+                imgCanvas,
+                iw, ih
+              });
+            });
           }
+        }
+        return fragments;
+      }
 
-          ctx.restore();
+      // ── PHYSICS PARTICLES
+      let particles = [];
+      let phase = 'hold'; // hold → tremor → shatter → fade
+      let phaseTimer = 0;
+      let animFrame;
+
+      // Photo display positions — centered, slightly offset
+      const photoSlots = [
+        { x: cx - 20, y: cy - 10 },
+        { x: cx + 15, y: cy - 5  },
+        { x: cx - 5,  y: cy + 12 }
+      ];
+
+      function buildScene() {
+        clearTimeout(safety);
+
+        // Build particles for each photo
+        imgCanvases.forEach((ic, i) => {
+          if (!ic) return;
+          const frags = makeFragments(ic, 28);
+          const slot  = photoSlots[i];
+          const drawX = slot.x - ic.width  / 2;
+          const drawY = slot.y - ic.height / 2;
+
+          frags.forEach(f => {
+            // Each fragment starts at its position within the photo
+            const wx = drawX + f.cx; // world x of fragment center
+            const wy = drawY + f.cy; // world y of fragment center
+
+            // Outward velocity from screen center — held back until shatter
+            const dx  = wx - cx;
+            const dy  = wy - cy;
+            const len = Math.sqrt(dx*dx + dy*dy) || 1;
+            const spd = 4 + Math.random() * 14;
+
+            particles.push({
+              ...f,
+              drawX, drawY,         // photo top-left in world space
+              wx, wy,               // current world position of fragment
+              ox: wx, oy: wy,       // original position
+              vx: (dx/len) * spd,
+              vy: (dy/len) * spd - Math.random() * 3,
+              va: (Math.random() - 0.5) * 0.25, // angular velocity
+              angle: 0,
+              alpha: 1,
+              photoIdx: i,
+              // tremor offset — small shake before shatter
+              tx: 0, ty: 0
+            });
+          });
         });
 
-        if (!allDone && frame < DURATION + 20) {
-          requestAnimationFrame(animate);
+        phase = 'hold';
+        phaseTimer = 0;
+        animFrame = requestAnimationFrame(tick);
+      }
+
+      const HOLD_FRAMES    = 30;  // photos sit still
+      const TREMOR_FRAMES  = 55;  // photos vibrate with increasing intensity
+      const SHATTER_FRAME  = 85;  // everything explodes
+      const FADE_FRAMES    = 90;  // fragments travel and fade
+
+      function tick() {
+        phaseTimer++;
+        ctx.clearRect(0, 0, W, H);
+
+        // Dark background fade-in during tremor
+        if (phaseTimer > HOLD_FRAMES) {
+          const t = Math.min(1, (phaseTimer - HOLD_FRAMES) / TREMOR_FRAMES);
+          ctx.fillStyle = `rgba(10,10,11,${t * 0.7})`;
+          ctx.fillRect(0, 0, W, H);
+        }
+
+        const shattering = phaseTimer >= SHATTER_FRAME;
+        let allFaded = true;
+
+        particles.forEach(p => {
+          if (phaseTimer <= HOLD_FRAMES) {
+            // Hold — draw whole photos using fragments at rest
+            drawFragment(p, p.ox, p.oy, 0, 1);
+            allFaded = false;
+
+          } else if (phaseTimer <= SHATTER_FRAME) {
+            // Tremor — increasing shake
+            const t = (phaseTimer - HOLD_FRAMES) / TREMOR_FRAMES;
+            const intensity = t * t * 7; // exponential buildup
+            p.tx = (Math.random() - 0.5) * intensity;
+            p.ty = (Math.random() - 0.5) * intensity;
+            drawFragment(p, p.ox + p.tx, p.oy + p.ty, 0, 1);
+            allFaded = false;
+
+          } else {
+            // Shatter — fragments fly
+            const t = (phaseTimer - SHATTER_FRAME) / FADE_FRAMES;
+            p.wx += p.vx;
+            p.wy += p.vy;
+            p.vy += 0.18; // gravity
+            p.vx *= 0.995;
+            p.angle += p.va;
+            p.alpha  = Math.max(0, 1 - (t * t * 1.2));
+
+            if (p.alpha > 0.01) {
+              drawFragment(p, p.wx, p.wy, p.angle, p.alpha);
+              allFaded = false;
+            }
+          }
+        });
+
+        if (!allFaded || phaseTimer < SHATTER_FRAME + FADE_FRAMES) {
+          animFrame = requestAnimationFrame(tick);
         } else {
           ctx.clearRect(0, 0, W, H);
           resolve();
         }
+      }
+
+      function drawFragment(p, wx, wy, angle, alpha) {
+        const { poly, cx: fcx, cy: fcy, drawX, drawY, imgCanvas, iw, ih } = p;
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+
+        // Move to fragment world position and rotate around its center
+        ctx.translate(wx, wy);
+        ctx.rotate(angle);
+
+        // Clip to fragment polygon (offset to center)
+        ctx.beginPath();
+        poly.forEach((pt, i) => {
+          const px = pt.x - fcx;
+          const py = pt.y - fcy;
+          i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        });
+        ctx.closePath();
+        ctx.clip();
+
+        // Draw the image portion — offset so fragment shows the right pixel region
+        ctx.shadowColor = 'rgba(0,0,0,0.6)';
+        ctx.shadowBlur  = 8;
+        ctx.drawImage(
+          imgCanvas,
+          drawX - wx + (wx - drawX) - fcx + drawX - wx,  // align source
+          drawY - wy + (wy - drawY) - fcy + drawY - wy,
+          iw, ih
+        );
+
+        // Simpler: just translate back to draw the full image aligned
+        ctx.restore();
+
+        // Redraw with correct image alignment
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.translate(wx, wy);
+        ctx.rotate(angle);
+
+        ctx.beginPath();
+        poly.forEach((pt, i) => {
+          const px = pt.x - fcx;
+          const py = pt.y - fcy;
+          i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        });
+        ctx.closePath();
+        ctx.clip();
+
+        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+        ctx.shadowBlur  = 6;
+        // Draw image so fragment center aligns with (0,0)
+        ctx.drawImage(imgCanvas, drawX - p.ox, drawY - p.oy);
+
+        ctx.restore();
       }
     });
   }
@@ -2030,27 +2237,114 @@
 
   // ─── DEV PANEL
   function buildDevPanel() {
-    // Remove existing panel if any
     const old = document.getElementById('devPanel');
     if (old) old.remove();
 
     const panel = document.createElement('div');
     panel.id = 'devPanel';
     panel.innerHTML = `
-      <div id="devPanelInner">
-        <div class="dev-header">
-          <span class="dev-title">&#9881; Dev Panel</span>
+      <div class="dev-toggle" onclick="devToggle()">&#9881; Dev</div>
+      <div id="devPanelInner" class="dev-collapsed">
+        <div class="dev-section">
+          <div class="dev-section-title">Screens</div>
           <div class="dev-actions">
-            <button onclick="devResetContribution()" class="dev-btn">Reset today's gate</button>
-            <button onclick="window.location.href='?dev=1&milestone=1'" class="dev-btn dev-btn-gold">Test milestone screen</button>
-            <button onclick="devClearAll()" class="dev-btn dev-btn-red">Clear all entries</button>
+            <button onclick="devGoScreen('screen-question')"     class="dev-btn">Question</button>
+            <button onclick="devGoScreen('screen-concept')"      class="dev-btn">Concept</button>
+            <button onclick="devGoScreen('screen-contributed')"  class="dev-btn">Already contributed</button>
+            <button onclick="devGoScreen('screen-bridge')"       class="dev-btn">Bridge</button>
+            <button onclick="devGoScreen('screen-photo')"        class="dev-btn">Daily photo</button>
+            <button onclick="devGoScreen('screen-thankyou')"     class="dev-btn">Thank you</button>
+            <button onclick="devGoScreen('screen-milestone')"    class="dev-btn dev-btn-gold">Milestone</button>
           </div>
         </div>
-        <div class="dev-count">${entries.length} entries / ${totalPhotoCount()} photos in Supabase</div>
-        <div class="dev-entries" id="devEntries">${buildDevEntries()}</div>
+        <div class="dev-section">
+          <div class="dev-section-title">Submission</div>
+          <div class="dev-actions">
+            <button onclick="devGoScreen('screen-submit-wrap')"  class="dev-btn">Open submission</button>
+            <button onclick="devGoSubmitStep(1)"  class="dev-btn">Step 1</button>
+            <button onclick="devGoSubmitStep(2)"  class="dev-btn">Step 2</button>
+            <button onclick="devGoSubmitStep(3)"  class="dev-btn">Step 3</button>
+            <button onclick="devGoSubmitStep(4)"  class="dev-btn">Step 4</button>
+            <button onclick="devGoSubmitStep(5)"  class="dev-btn">Step 5</button>
+            <button onclick="devGoSubmitStep(6)"  class="dev-btn">Step 6</button>
+            <button onclick="devGoSubmitStep(7)"  class="dev-btn">Step 7</button>
+          </div>
+        </div>
+        <div class="dev-section">
+          <div class="dev-section-title">Animation</div>
+          <div class="dev-actions">
+            <button onclick="devTestShatter()" class="dev-btn dev-btn-gold">Test shatter</button>
+          </div>
+        </div>
+        <div class="dev-section">
+          <div class="dev-section-title">Data</div>
+          <div class="dev-actions">
+            <button onclick="devResetContribution()" class="dev-btn">Reset gate</button>
+            <button onclick="devSeedEntries()" class="dev-btn dev-btn-gold">Seed 34 entries</button>
+            <button onclick="devClearAll()" class="dev-btn dev-btn-red">Clear all entries</button>
+          </div>
+          <div class="dev-count" id="devCount">${entries.length} entries / ${totalPhotoCount()} photos</div>
+        </div>
+        <div class="dev-section">
+          <div class="dev-section-title">Entries</div>
+          <div class="dev-entries" id="devEntries">${buildDevEntries()}</div>
+        </div>
       </div>
     `;
     document.body.appendChild(panel);
+  }
+
+  function devToggle() {
+    const inner = document.getElementById('devPanelInner');
+    inner.classList.toggle('dev-collapsed');
+  }
+
+  function devGoScreen(id) {
+    const all = ['screen-question','screen-concept','screen-contributed',
+                 'screen-thankyou','screen-bridge','screen-photo',
+                 'screen-milestone','screen-submit-wrap'];
+    const current = all.find(s => document.getElementById(s).classList.contains('visible'));
+    if (current && current !== id) transition(current, id);
+    else if (!current) {
+      const target = document.getElementById(id);
+      target.style.zIndex = 200;
+      target.classList.add('visible');
+    }
+    if (id === 'screen-photo') setTimeout(showDailyPhoto, 400);
+    if (id === 'screen-submit-wrap') {
+      resetDraft(); currentStep = 1; updateSubmitUI();
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function devGoSubmitStep(step) {
+    devGoScreen('screen-submit-wrap');
+    setTimeout(() => {
+      currentStep = step;
+      updateSubmitUI();
+    }, 300);
+  }
+
+  function devTestShatter() {
+    // Use placeholder colored canvases if no draft photos
+    const srcs = draftPhotos.filter(Boolean);
+    if (srcs.length) {
+      runScatterAnimation(srcs);
+      return;
+    }
+    // Generate 3 placeholder colored images
+    const colors = ['#8b4a3a','#3a5a8b','#4a7a4a'];
+    const placeholders = colors.map(color => {
+      const c = document.createElement('canvas');
+      c.width = 300; c.height = 225;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, 300, 225);
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      ctx.fillRect(20, 20, 260, 185);
+      return c.toDataURL();
+    });
+    runScatterAnimation(placeholders);
   }
 
   function buildDevEntries() {
@@ -2088,6 +2382,107 @@
     } catch(e) {
       showToast('Delete failed: ' + e.message);
     }
+  }
+
+  async function devSeedEntries() {
+    const btn = document.querySelector('[onclick="devSeedEntries()"]');
+    if (btn) { btn.textContent = 'Seeding...'; btn.disabled = true; }
+
+    const photoIds = [
+      '1506905925346-21bda4d32df4','1501854140801-50d01698950b','1500534314209-a25ddb2bd429',
+      '1518173946687-a4c8892bbd9f','1504701954957-2010ec3bcec1','1520962922320-2b03234c84b0',
+      '1516410529446-2ca648f96f9a','1504198453319-5ce911bafcde','1495954484750-af469f2f9a2e',
+      '1523712999610-f77fbcfc3843','1519681393784-d120267933ba','1448375240586-882707db888b',
+      '1490750967868-88df5691cc2b','1516912481800-62e4b51f7b30','1470770841072-f978cf4d7821',
+      '1507003211169-0a1dd7228f2d','1531746020798-e6953c6e8e04','1500530855697-b586d89ba3ee',
+      '1502082553048-f009d7ea9b4b','1494790108377-be9c29b29330','1534528741775-53994a69daeb',
+      '1517841905240-472988babdf9','1522556189639-b9929e36c3c2','1524504388940-b1c1722653e1',
+      '1529665253569-6a7f20f97e2e','1519085360753-af0119f7cbe7','1520367445093-50dc08a59d9d',
+      '1500051638674-ff996a5bf4f4','1519389950473-47ba0277781c','1504593811423-6dd665756598',
+      '1513077202514-351a3b054e2e','1507679799987-c73779587ccf','1529778873976-6bce7eabb4b6',
+      '1506863530036-1438dc33239a','1527689368851-a7ee5e6cc388','1530103862676-de8c9debad1d',
+      '1513346940221-6f673d962e97','1528360983277-13d401cdc186','1523978591478-c753949ff840',
+      '1519011103408-c75e8a9e74f7','1504474000021-c8f7fe80bdf4','1526779259212-939e64788fe3',
+      '1532012197267-da84d127e765','1533750349088-cd871a92f312','1509023464322-5e220b354f7b',
+    ];
+
+    const names = [
+      'Elena Vasquez','Marcus Webb','Yuki Tanaka','Amara Osei','Daniel Ferreira',
+      'Sofia Lindqvist','James Okoro','Priya Nair','Tom Bergmann','Chloe Martin',
+      'Riku Nakamura','Fatima Al-Hassan','Leo Marchetti','Aisha Diallo','Sam Brooks',
+      'Nina Johansson','Carlos Vega','Mei Lin','Patrick O\'Brien','Zara Ahmed',
+      'Henrik Svensson','Layla Mansour','Diego Reyes','Anna Kozlov','Ben Hartley',
+      'Chiara Romano','Omar Farouk','Ingrid Berg','Felix Dubois','Rasha Khalid',
+      'Will Turner','Nadia Popov','Kwame Asante','Isabel Santos'
+    ];
+
+    const titles = [
+      'The summer we almost stayed','Before everything changed','What I carry with me',
+      'The year my father came home','Three things I keep coming back to',
+      'Ordinary days','What remains','The places I\'ve left','Home is a feeling',
+      'People I\'ve loved','Small moments','The road between','Before and after',
+      'Things that matter most','A life in three frames','What I chose to remember',
+      'The quiet years','Where I belong','People and places','What we held onto',
+      'The light that year','Between seasons','A few good years','Before I knew better',
+      'What photographs can\'t hold','The spaces between','What endures',
+      'Three photographs, one story','Memory and time','What I kept',
+      'The years before','Small beautiful things','What mattered','The long view'
+    ];
+
+    const narratives = [
+      'This is the one photograph I always come back to.',
+      'We didn\'t know it then, but everything was about to change.',
+      'The light was wrong that day. Everything else was perfect.',
+      'I\'ve shown this to maybe three people in my life.',
+      'My mother took this. She doesn\'t remember taking it.',
+      'I was trying to capture something that was already gone.',
+      'This is not a beautiful photograph. That\'s exactly why I chose it.',
+      'Seven years later I still can\'t look at this without feeling something.',
+      'The story behind this one is too long and too private.',
+      'I chose this because it\'s the truest thing I have.',
+    ];
+
+    const months = [
+      'January 2024','February 2024','March 2024','April 2024','May 2024',
+      'June 2024','July 2024','August 2024','September 2024','October 2024',
+      'November 2024','December 2024','January 2025','February 2025','March 2025',
+      'April 2025','May 2025','June 2025','July 2025','August 2025'
+    ];
+
+    const rand  = arr => arr[Math.floor(Math.random() * arr.length)];
+    const img   = id  => `https://images.unsplash.com/photo-${id}?w=600&q=70&fit=crop`;
+    const shuf  = [...photoIds].sort(() => Math.random() - 0.5);
+    const TOTAL = 34;
+    let inserted = 0;
+
+    for (let i = 0; i < TOTAL; i++) {
+      const entry = {
+        title:  titles[i % titles.length],
+        author: names[i % names.length],
+        date:   months[i % months.length],
+        photos: [
+          { src: img(shuf[(i*3)   % shuf.length]), narrative: rand(narratives), audio: null },
+          { src: img(shuf[(i*3+1) % shuf.length]), narrative: rand(narratives), audio: null },
+          { src: img(shuf[(i*3+2) % shuf.length]), narrative: rand(narratives), audio: null }
+        ]
+      };
+
+      try {
+        await dbInsertEntry(entry);
+        inserted++;
+        if (btn) btn.textContent = `Seeding ${inserted}/${TOTAL}...`;
+      } catch(e) {
+        console.error('Seed failed at entry', i, e);
+      }
+
+      await new Promise(r => setTimeout(r, 100));
+    }
+
+    // Reload entries
+    entries = await dbLoadEntries();
+    if (btn) { btn.textContent = `Done — ${inserted} added`; btn.disabled = false; }
+    buildDevPanel();
+    showToast(`${inserted} test entries added. Reload to trigger milestone.`);
   }
 
   async function devClearAll() {
