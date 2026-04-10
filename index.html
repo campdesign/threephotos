@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>The Three</title>
+  <title>Three Photos</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Instrument+Sans:wght@300;400&display=swap" rel="stylesheet" />
@@ -797,6 +797,93 @@
       .submit-footer { padding: 14px 20px; }
       .screen { padding: 28px 24px; }
     }
+    /* ─── SCATTER ANIMATION ─── */
+    #scatterCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 8500;
+      pointer-events: none;
+    }
+
+    /* ─── DEV PANEL ─── */
+    #devPanel {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 9999;
+      max-height: 50vh;
+      overflow-y: auto;
+      background: #0d0d10;
+      border-top: 2px solid #c9a96e;
+      font-family: var(--sans);
+      font-size: 12px;
+    }
+    #devPanelInner { padding: 14px 20px; }
+    .dev-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 10px; flex-wrap: wrap;
+    }
+    .dev-title { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
+    .dev-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .dev-btn {
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--dim); padding: 5px 12px; font-size: 10px;
+      letter-spacing: 0.08em; cursor: pointer; font-family: var(--sans);
+      text-transform: uppercase; transition: all 0.2s;
+    }
+    .dev-btn:hover { border-color: var(--border-hi); color: var(--white); }
+    .dev-btn-gold { border-color: var(--gold-dim); color: var(--gold); }
+    .dev-btn-gold:hover { background: var(--gold-dim); }
+    .dev-btn-red { border-color: rgba(139,58,58,0.4); color: #c47070; }
+    .dev-btn-red:hover { background: rgba(139,58,58,0.15); }
+    .dev-count { font-size: 10px; color: var(--muted); margin-bottom: 12px; letter-spacing: 0.06em; }
+    .dev-empty { color: var(--muted); font-size: 11px; font-style: italic; }
+    .dev-entries { display: flex; flex-direction: column; gap: 8px; }
+    .dev-entry {
+      display: flex; gap: 12px; align-items: flex-start;
+      background: var(--card); border: 1px solid var(--border);
+      padding: 10px 12px;
+    }
+    .dev-entry-photos { display: flex; gap: 4px; flex-shrink: 0; }
+    .dev-thumb {
+      width: 48px; height: 36px; object-fit: cover;
+      filter: brightness(0.8); border: 1px solid var(--border);
+    }
+    .dev-entry-info {
+      flex: 1; display: flex; flex-direction: column; gap: 3px;
+      min-width: 0;
+    }
+    .dev-entry-info strong { color: var(--white); font-size: 12px; font-weight: 400; }
+    .dev-entry-info span { color: var(--muted); font-size: 10px; }
+    .dev-entry-info em { color: var(--dim); font-size: 10px; font-style: italic; }
+    .dev-entry-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    /* Dev edit modal */
+    .dev-edit-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9600;
+    }
+    .dev-edit-modal {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      z-index: 9700; background: var(--card); border: 1px solid var(--border);
+      padding: 28px; width: min(560px, 92vw); max-height: 85vh; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .dev-edit-title { font-family: var(--serif); font-size: 20px; font-weight: 300; color: var(--white); margin-bottom: 4px; }
+    .dev-edit-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-top: 4px; }
+    .dev-edit-input {
+      width: 100%; background: var(--surface); border: 1px solid var(--border);
+      color: var(--white); font-family: var(--sans); font-size: 13px;
+      font-weight: 300; padding: 9px 12px; outline: none; resize: vertical;
+    }
+    .dev-edit-input:focus { border-color: var(--gold-dim); }
+    .dev-edit-photo-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+    .dev-edit-photo-thumb { width: 80px; height: 60px; object-fit: cover; border: 1px solid var(--border); filter: brightness(0.8); }
+    .dev-edit-replace-btn {
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--dim); cursor: pointer; border: 1px solid var(--border);
+      padding: 6px 12px; transition: all 0.2s;
+    }
+    .dev-edit-replace-btn:hover { border-color: var(--border-hi); color: var(--white); }
+    .dev-edit-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; padding-top: 12px; border-top: 1px solid var(--border); }
   </style>
 </head>
 <body>
@@ -812,10 +899,10 @@
 <div class="screen" id="screen-concept">
   <div class="concept-body">
     <div class="concept-rule"></div>
-    <h1 class="concept-title">The&nbsp;Three</h1>
+    <h1 class="concept-title">Three&nbsp;Photos</h1>
     <p class="concept-text">
       People were asked for three photographs. These are what they&nbsp;gave.<br><br>
-      <em>The Three doesn't show you everything.</em><br><br>
+      <em>Three Photos doesn't show you everything.</em><br><br>
       Like memories, these photographs are not permanent. They surface when you least expect them. Each day, one photograph will find you. You won't know whose it is until the story&nbsp;reveals&nbsp;itself.
     </p>
     <div class="concept-rule-bottom"></div>
@@ -834,7 +921,7 @@
     <div class="concept-rule"></div>
     <h1 class="concept-title" style="font-size:clamp(22px,2.5vw,32px);letter-spacing:0.04em;">You've already<br>contributed today.</h1>
     <p class="concept-text">
-      The Three accepts one contribution per&nbsp;day.<br><br>
+      Three Photos accepts one contribution per&nbsp;day.<br><br>
       <em>Your photographs are now part of something larger.</em><br><br>
       Come back tomorrow. A new photograph will be waiting, and so will the chance to add&nbsp;another&nbsp;story.
     </p>
@@ -848,10 +935,10 @@
 <div class="screen" id="screen-thankyou">
   <div class="concept-body">
     <div class="concept-rule"></div>
-    <h1 class="concept-title" style="font-size:clamp(20px,2.4vw,30px);letter-spacing:0.04em;">Your story is<br>in The Three.</h1>
+    <h1 class="concept-title" style="font-size:clamp(20px,2.4vw,30px);letter-spacing:0.04em;">Your story is<br>in Three&nbsp;Photos.</h1>
     <p class="concept-text">
       <em>Thank you for choosing carefully.</em><br><br>
-      When The Three reaches 100 photographs, something will be made from them. An AI-generated work, shaped by every image and memory in the collective. It will be sent only to those who contributed.<br><br>
+      When Three Photos reaches 100 photographs, something will be made from them. An AI-generated work, shaped by every image and memory in the collective. It will be sent only to those who contributed.<br><br>
       <span id="milestoneCount" style="color:var(--gold);font-family:var(--serif);font-style:italic;"></span>
     </p>
     <div class="email-capture" id="emailCapture">
@@ -873,7 +960,7 @@
     <div class="concept-rule"></div>
     <h1 class="concept-title" style="font-size:clamp(20px,2.4vw,30px);">Now see what<br>others gave.</h1>
     <p class="concept-text">
-      Every photograph in The Three was chosen deliberately.<br><br>
+      Every photograph in Three Photos was chosen deliberately.<br><br>
       <em>One will find you today.</em><br><br>
       Each day a single photograph surfaces from the collective — unannounced, unordered. Like a memory you didn't plan&nbsp;on&nbsp;having.
     </p>
@@ -887,15 +974,15 @@
   <div class="photo-screen-inner">
 
     <div class="photo-header">
-      <div class="photo-header-logo">The&nbsp;<em>Three</em></div>
+      <div class="photo-header-logo">Three&nbsp;<em>Photos</em></div>
       <button class="btn-about" onclick="goToConcept()">About</button>
     </div>
 
     <!-- Empty state -->
     <div class="daily-empty" id="dailyEmpty" style="display:none;">
-      <h2>The Three is waiting.</h2>
+      <h2>Three Photos is waiting.</h2>
       <p>No photographs yet.<br>Be the first to contribute&nbsp;yours.</p>
-      <button class="btn-primary" style="margin-top:8px;" onclick="openSubmit()">Contribute to The&nbsp;Three</button>
+      <button class="btn-primary" style="margin-top:8px;" onclick="openSubmit()">Contribute to Three&nbsp;Photos</button>
     </div>
 
     <!-- Daily photo card -->
@@ -910,7 +997,7 @@
       <div class="daily-photo-nav" id="dailyPhotoNav"></div>
 
       <div class="daily-label">
-        <p class="daily-label-eyebrow" id="dailyEyebrow">The Three</p>
+        <p class="daily-label-eyebrow" id="dailyEyebrow">Three Photos</p>
         <h2 class="daily-title" id="dailyTitle"></h2>
         <div class="daily-meta" id="dailyMeta">
           <span class="daily-author" id="dailyAuthor"></span>
@@ -932,13 +1019,13 @@
     <div class="invite-panel" id="invitePanel">
       <div class="invite-inner">
         <p class="invite-question">What three photographs<br>would you give?</p>
-        <button class="invite-btn" onclick="openSubmit()">Add yours to The&nbsp;Three</button>
+        <button class="invite-btn" onclick="openSubmit()">Add yours to Three&nbsp;Photos</button>
       </div>
     </div>
 
     <div class="screen-hint">
       <span class="hint-gesture">&#8592; &nbsp; &#8594;</span>
-      <span class="hint-text">Swipe or use arrows to move through The&nbsp;Three</span>
+      <span class="hint-text">Swipe or use arrows to move through Three&nbsp;Photos</span>
       <span class="hint-dot"></span>
       <span class="hint-text">Tap the label to read the full&nbsp;story</span>
     </div>
@@ -950,7 +1037,7 @@
 <!-- Milestone screen — shown when 100 photos reached -->
 <div class="screen" id="screen-milestone">
   <div class="milestone-content">
-    <p class="milestone-eyebrow">The Three — 100 Photographs</p>
+    <p class="milestone-eyebrow">Three Photos — 100 Photographs</p>
     <h1 class="milestone-title">The collective has spoken.</h1>
     <p class="milestone-text">
       One hundred photographs. One hundred stories chosen carefully.<br><br>
@@ -1090,7 +1177,7 @@
           <input type="text" id="fAuthor" placeholder="How should we credit you?" maxlength="60" />
         </div>
         <p style="font-size:11px;color:var(--muted);line-height:1.7;">
-          Your story enters The Three. One photograph may surface to a visitor on&nbsp;any&nbsp;given&nbsp;day.
+          Your story enters Three Photos. One photograph may surface to a visitor on&nbsp;any&nbsp;given&nbsp;day.
         </p>
       </div>
     </div>
@@ -1110,26 +1197,83 @@
   <img id="lbImg" src="" alt="" />
 </div>
 
+<!-- Scatter canvas — used during publish animation -->
+<canvas id="scatterCanvas"></canvas>
+
 <div class="toast" id="toast"></div>
 
 <script>
+  // ─── SUPABASE
+  const SB_URL = 'https://fzeosiuwbhjnfzrobhkq.supabase.co';
+  const SB_KEY = 'sb_publishable_SfXd4o2aeYdsoM0vqhBaRQ_azhj6Axm';
+
+  async function sbFetch(path, options = {}) {
+    const res = await fetch(`${SB_URL}/rest/v1${path}`, {
+      ...options,
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': `Bearer ${SB_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': options.prefer || '',
+        ...options.headers
+      }
+    });
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`Supabase error ${res.status}: ${err}`);
+    }
+    // No body expected for 201/204
+    if (res.status === 201 || res.status === 204) return null;
+    return res.json().catch(() => null);
+  }
+
+  async function dbLoadEntries() {
+    try {
+      const data = await sbFetch('/entries?select=*&order=created_at.desc');
+      return Array.isArray(data) ? data : [];
+    } catch(e) {
+      console.warn('Could not load entries from Supabase:', e);
+      return [];
+    }
+  }
+
+  async function dbInsertEntry(entry) {
+    await sbFetch('/entries', {
+      method: 'POST',
+      prefer: 'return=minimal',
+      body: JSON.stringify({
+        title:  entry.title,
+        author: entry.author,
+        date:   entry.date,
+        photos: entry.photos
+      })
+    });
+  }
+
+  async function dbInsertEmail(email) {
+    await sbFetch('/emails', {
+      method: 'POST',
+      prefer: 'return=minimal',
+      body: JSON.stringify({ email })
+    });
+  }
+
   // ─── DATA
   const STEPS = 7;
   const MILESTONE = 100;
-  // In production, replace with your actual artwork URL once generated
-  const MILESTONE_URL = 'https://thethree.art/work';
+  const MILESTONE_URL = 'https://threephotos.art/work';
 
   let entries = [];
-  try { entries = JSON.parse(localStorage.getItem('3photos_v4') || '[]'); } catch(e) {}
 
   // Total individual photos across all entries
   function totalPhotoCount() {
     return entries.reduce((sum, e) => sum + e.photos.length, 0);
   }
 
+  const DEV = new URLSearchParams(window.location.search).get('dev') === '1';
+
   function milestoneReached() {
-    // Dev override: ?milestone=1 forces milestone screen for testing
-    if (new URLSearchParams(window.location.search).get('milestone') === '1') return true;
+    if (DEV && new URLSearchParams(window.location.search).get('milestone') === '1') return true;
     return totalPhotoCount() >= MILESTONE;
   }
 
@@ -1149,7 +1293,7 @@
 
   // ─── CONTRIBUTION GATE
   function todayKey() {
-    return '3photos_contributed_' + new Date().toISOString().slice(0, 10);
+    return 'threephotos_contributed_' + new Date().toISOString().slice(0, 10);
   }
 
   function hasContributedToday() {
@@ -1162,14 +1306,8 @@
 
   // ─── SCREEN TRANSITIONS
 
-  // Dev mode: ?milestone=1 jumps straight to milestone screen on load
-  if (new URLSearchParams(window.location.search).get('milestone') === '1') {
-    document.getElementById('screen-question').classList.remove('visible');
-    document.getElementById('milestoneLink').href = MILESTONE_URL;
-    const ms = document.getElementById('screen-milestone');
-    ms.style.zIndex = 200;
-    ms.classList.add('visible');
-  }
+  // Dev mode active when ?dev=1
+  // Also supports ?dev=1&milestone=1 to jump to milestone screen
 
   function enterFromQuestion() {
     if (hasContributedToday()) {
@@ -1195,7 +1333,7 @@
     const phCount = totalPhotoCount();
     const pct = Math.min(100, Math.round((phCount / MILESTONE) * 100));
     document.getElementById('conceptCount').textContent =
-      n ? `${n} ${n === 1 ? 'story' : 'stories'} in The Three` : 'The Three is empty. Be first.';
+      n ? `${n} ${n === 1 ? 'story' : 'stories'} in Three Photos` : 'Three Photos is empty. Be first.';
     transition(from, 'screen-concept');
     setTimeout(() => {
       document.getElementById('conceptBarFill').style.width = pct + '%';
@@ -1542,10 +1680,15 @@
     window.scrollTo(0, 0);
   }
 
-  function publish() {
+  async function publish() {
     const title  = document.getElementById('fTitle').value.trim();
     const author = document.getElementById('fAuthor').value.trim();
     if (!title) { showToast('Please give your story a title.'); return; }
+
+    // Disable button to prevent double submit
+    const btn = document.getElementById('btnNext');
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
 
     const photos = draftPhotos.filter(Boolean).map((src, i) => ({
       src,
@@ -1553,18 +1696,34 @@
       audio:     draftAudio[i]     || null
     }));
 
-    entries.unshift({
-      id: Date.now(), title,
+    const entry = {
+      title,
       author: author || 'Anonymous',
       photos,
       date: new Date().toLocaleDateString('en-US', { year:'numeric', month:'long' })
-    });
+    };
 
-    try { localStorage.setItem('3photos_v4', JSON.stringify(entries)); } catch(e) {}
+    try {
+      await dbInsertEntry(entry);
+      // Reload entries so count is fresh
+      entries = await dbLoadEntries();
+    } catch(e) {
+      console.error('Failed to save entry:', e);
+      showToast('Something went wrong. Please try again.');
+      btn.disabled = false;
+      btn.textContent = 'Add to Three Photos';
+      return;
+    }
 
     markContributedToday();
     stopRec();
     document.body.style.overflow = '';
+    btn.disabled = false;
+    btn.textContent = 'Add to Three Photos';
+
+    // Run scatter animation before transitioning away
+    const photoSrcs = draftPhotos.filter(Boolean);
+    await runScatterAnimation(photoSrcs);
 
     // Check milestone
     if (milestoneReached()) {
@@ -1577,7 +1736,7 @@
     const phCount = totalPhotoCount();
     const remaining = MILESTONE - phCount;
     document.getElementById('milestoneCount').textContent =
-      `${phCount} ${phCount === 1 ? 'photograph' : 'photographs'} in The Three. `
+      `${phCount} ${phCount === 1 ? 'photograph' : 'photographs'} in Three Photos. `
       + `${remaining} more until the work is revealed.`;
 
     // Reset email form
@@ -1585,21 +1744,22 @@
     document.getElementById('emailCapture').style.display = 'flex';
     document.getElementById('emailConfirmed').style.display = 'none';
 
-    // Go to thank-you, then "see what others gave" bridge
     transition('screen-submit-wrap', 'screen-thankyou');
   }
 
   // ─── EMAIL
-  function submitEmail() {
+  async function submitEmail() {
     const val = document.getElementById('emailInput').value.trim();
     if (!val || !val.includes('@')) { showToast('Please enter a valid email address.'); return; }
 
-    // Store locally (in production, POST to your backend/Netlify function/Formspree etc.)
-    let emails = [];
-    try { emails = JSON.parse(localStorage.getItem('3photos_emails') || '[]'); } catch(e) {}
-    if (!emails.includes(val)) {
-      emails.push(val);
-      try { localStorage.setItem('3photos_emails', JSON.stringify(emails)); } catch(e) {}
+    const emailBtn = document.querySelector('#emailCapture .btn-primary');
+    if (emailBtn) { emailBtn.disabled = true; emailBtn.textContent = 'Saving...'; }
+
+    try {
+      await dbInsertEmail(val);
+    } catch(e) {
+      // Unique constraint means already subscribed — that's fine
+      console.warn('Email insert:', e.message);
     }
 
     document.getElementById('emailCapture').style.display = 'none';
@@ -1681,6 +1841,126 @@
     rec.on = false;
   }
 
+  // ─── SCATTER ANIMATION
+  function runScatterAnimation(srcs) {
+    return new Promise(resolve => {
+      const canvas = document.getElementById('scatterCanvas');
+      const ctx    = canvas.getContext('2d');
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      // Load all images first
+      let loaded = 0;
+      const imgs = srcs.map(src => {
+        const img = new Image();
+        img.onload = () => {
+          loaded++;
+          if (loaded === srcs.length) animate();
+        };
+        img.onerror = () => { loaded++; if (loaded === srcs.length) animate(); };
+        img.src = src;
+        return img;
+      });
+
+      // Each photo gets a particle with a unique trajectory
+      const W = canvas.width, H = canvas.height;
+      const cx = W / 2, cy = H / 2;
+
+      // Spread angles — roughly thirds of a circle, with gentle randomness
+      const baseAngles = [
+        -Math.PI * 0.65,  // upper left
+        -Math.PI * 0.18,  // upper right
+         Math.PI * 0.55,  // lower center
+      ];
+
+      const particles = imgs.map((img, i) => {
+        const angle  = baseAngles[i] + (Math.random() - 0.5) * 0.4;
+        const speed  = 3.2 + Math.random() * 2.2;
+        const spin   = (Math.random() - 0.5) * 0.045;
+        const w      = Math.min(W * 0.28, 180);
+        const h      = w * 0.75;
+        // Start near center
+        const startX = cx - w / 2 + (Math.random() - 0.5) * 60;
+        const startY = cy - h / 2 + (Math.random() - 0.5) * 40;
+        return {
+          img, w, h,
+          x: startX, y: startY,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          rotation: (Math.random() - 0.5) * 0.3,
+          spin,
+          alpha: 1,
+          // Slight scale breathe
+          scale: 0.85 + Math.random() * 0.2,
+          delay: i * 6  // stagger start by a few frames
+        };
+      });
+
+      let frame = 0;
+      const DURATION = 120; // frames
+
+      function animate() {
+        frame++;
+        ctx.clearRect(0, 0, W, H);
+
+        // Subtle dark vignette overlay that deepens as photos fade
+        const vigAlpha = Math.min(0.6, (frame / DURATION) * 0.7);
+        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * 0.7);
+        grad.addColorStop(0, `rgba(10,10,11,0)`);
+        grad.addColorStop(1, `rgba(10,10,11,${vigAlpha})`);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+
+        let allDone = true;
+
+        particles.forEach(p => {
+          if (frame < p.delay) { allDone = false; return; }
+          const t = (frame - p.delay) / (DURATION - p.delay);
+
+          // Ease in fast, drift and fade out slow
+          p.x += p.vx * (1 - t * 0.7);
+          p.y += p.vy * (1 - t * 0.7);
+          p.vy += 0.04; // very slight gravity
+          p.rotation += p.spin;
+
+          // Fade: hold full opacity briefly then dissolve
+          p.alpha = t < 0.3 ? 1 : 1 - ((t - 0.3) / 0.7);
+          p.alpha = Math.max(0, p.alpha);
+
+          if (p.alpha > 0) allDone = false;
+
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.translate(p.x + p.w / 2, p.y + p.h / 2);
+          ctx.rotate(p.rotation);
+          ctx.scale(p.scale, p.scale);
+
+          // Soft shadow
+          ctx.shadowColor = 'rgba(0,0,0,0.6)';
+          ctx.shadowBlur  = 18;
+
+          // Draw image
+          ctx.drawImage(p.img, -p.w / 2, -p.h / 2, p.w, p.h);
+
+          // Subtle desaturating overlay as it fades
+          if (p.alpha < 0.6) {
+            ctx.fillStyle = `rgba(10,10,11,${(0.6 - p.alpha) * 0.5})`;
+            ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          }
+
+          ctx.restore();
+        });
+
+        if (!allDone && frame < DURATION + 20) {
+          requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, W, H);
+          resolve();
+        }
+      }
+    });
+  }
+
   // ─── LIGHTBOX
   function openLB(src) {
     document.getElementById('lbImg').src = src;
@@ -1706,6 +1986,206 @@
     const src = document.getElementById('dailyImg').src;
     if (src) openLB(src);
   });
+
+  // ─── INIT
+  async function init() {
+    const params = new URLSearchParams(window.location.search);
+
+    // ?reset=1 — clears the contribution gate
+    if (params.get('reset') === '1') {
+      // Clear all possible contribution keys (handles timezone edge cases)
+      Object.keys(localStorage)
+        .filter(k => k.startsWith('threephotos_contributed_'))
+        .forEach(k => localStorage.removeItem(k));
+      window.history.replaceState({}, '', window.location.pathname);
+      // Use alert so it's impossible to miss on mobile
+      alert('Contribution gate reset. You can submit again.');
+    }
+
+    // Dev: jump straight to milestone screen
+    if (DEV && params.get('milestone') === '1') {
+      document.getElementById('screen-question').classList.remove('visible');
+      document.getElementById('milestoneLink').href = MILESTONE_URL;
+      const ms = document.getElementById('screen-milestone');
+      ms.style.zIndex = 200;
+      ms.classList.add('visible');
+    }
+
+    // Show loading state
+    const enterBtn = document.querySelector('#screen-question .screen-enter');
+    if (enterBtn && !DEV) { enterBtn.textContent = '...'; enterBtn.disabled = true; }
+
+    try {
+      entries = await dbLoadEntries();
+    } catch(e) {
+      console.warn('Using empty entries:', e);
+      entries = [];
+    }
+
+    if (enterBtn && !DEV) { enterBtn.textContent = 'Begin'; enterBtn.disabled = false; }
+
+    // Dev panel — build after entries loaded
+    if (DEV) buildDevPanel();
+  }
+
+  // ─── DEV PANEL
+  function buildDevPanel() {
+    // Remove existing panel if any
+    const old = document.getElementById('devPanel');
+    if (old) old.remove();
+
+    const panel = document.createElement('div');
+    panel.id = 'devPanel';
+    panel.innerHTML = `
+      <div id="devPanelInner">
+        <div class="dev-header">
+          <span class="dev-title">&#9881; Dev Panel</span>
+          <div class="dev-actions">
+            <button onclick="devResetContribution()" class="dev-btn">Reset today's gate</button>
+            <button onclick="window.location.href='?dev=1&milestone=1'" class="dev-btn dev-btn-gold">Test milestone screen</button>
+            <button onclick="devClearAll()" class="dev-btn dev-btn-red">Clear all entries</button>
+          </div>
+        </div>
+        <div class="dev-count">${entries.length} entries / ${totalPhotoCount()} photos in Supabase</div>
+        <div class="dev-entries" id="devEntries">${buildDevEntries()}</div>
+      </div>
+    `;
+    document.body.appendChild(panel);
+  }
+
+  function buildDevEntries() {
+    if (!entries.length) return '<p class="dev-empty">No entries yet.</p>';
+    return entries.map(e => `
+      <div class="dev-entry" id="deventry-${e.id}">
+        <div class="dev-entry-photos">
+          ${e.photos.map(p => `<img src="${p.src}" class="dev-thumb" />`).join('')}
+        </div>
+        <div class="dev-entry-info">
+          <strong>${e.title || 'Untitled'}</strong>
+          <span>${e.author || 'Anonymous'} &middot; ${e.date || ''}</span>
+          ${e.photos.map((p,i) => p.narrative ? `<em>Photo ${i+1}: ${p.narrative.slice(0,60)}${p.narrative.length>60?'…':''}</em>` : '').join('')}
+        </div>
+        <div class="dev-entry-actions">
+          <button onclick="devEditEntry(${e.id})" class="dev-btn">Edit</button>
+          <button onclick="devDeleteEntry(${e.id})" class="dev-btn dev-btn-red">Delete</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function devResetContribution() {
+    localStorage.removeItem(todayKey());
+    showToast('Contribution gate reset. You can contribute again today.');
+  }
+
+  async function devDeleteEntry(id) {
+    if (!confirm('Delete this entry from Supabase?')) return;
+    try {
+      await sbFetch(`/entries?id=eq.${id}`, { method: 'DELETE' });
+      entries = await dbLoadEntries();
+      buildDevPanel();
+      showToast('Entry deleted.');
+    } catch(e) {
+      showToast('Delete failed: ' + e.message);
+    }
+  }
+
+  async function devClearAll() {
+    if (!confirm('Delete ALL entries from Supabase? This cannot be undone.')) return;
+    try {
+      await sbFetch('/entries?id=gt.0', { method: 'DELETE' });
+      entries = [];
+      buildDevPanel();
+      showToast('All entries cleared.');
+    } catch(e) {
+      showToast('Clear failed: ' + e.message);
+    }
+  }
+
+  function devEditEntry(id) {
+    const entry = entries.find(e => e.id === id);
+    if (!entry) return;
+
+    const old = document.getElementById('devEditForm');
+    if (old) old.remove();
+
+    const form = document.createElement('div');
+    form.id = 'devEditForm';
+    form.innerHTML = `
+      <div class="dev-edit-backdrop" onclick="this.parentElement.remove()"></div>
+      <div class="dev-edit-modal">
+        <h3 class="dev-edit-title">Edit Entry</h3>
+        <label class="dev-edit-label">Title</label>
+        <input type="text" id="devEditTitle" value="${entry.title || ''}" class="dev-edit-input" />
+        <label class="dev-edit-label">Author</label>
+        <input type="text" id="devEditAuthor" value="${entry.author || ''}" class="dev-edit-input" />
+        ${entry.photos.map((p, i) => `
+          <label class="dev-edit-label">Photo ${i+1} narrative</label>
+          <textarea id="devEditNarrative${i}" class="dev-edit-input" rows="3">${p.narrative || ''}</textarea>
+          <div class="dev-edit-photo-wrap">
+            <img src="${p.src}" class="dev-edit-photo-thumb" />
+            <label class="dev-edit-replace-btn">
+              Replace photo ${i+1}
+              <input type="file" accept="image/*" onchange="devReplacePhoto(this, ${id}, ${i})" style="display:none;" />
+            </label>
+          </div>
+        `).join('')}
+        <div class="dev-edit-footer">
+          <button onclick="document.getElementById('devEditForm').remove()" class="dev-btn">Cancel</button>
+          <button onclick="devSaveEdit(${id})" class="dev-btn dev-btn-gold">Save changes</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(form);
+  }
+
+  function devReplacePhoto(input, entryId, photoIdx) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const entry = entries.find(en => en.id === entryId);
+      if (entry) {
+        entry.photos[photoIdx]._newSrc = e.target.result;
+        // Update thumb preview
+        const thumbs = document.querySelectorAll(`#devEditForm .dev-edit-photo-thumb`);
+        if (thumbs[photoIdx]) thumbs[photoIdx].src = e.target.result;
+        showToast(`Photo ${photoIdx+1} staged. Save to confirm.`);
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function devSaveEdit(id) {
+    const entry = entries.find(e => e.id === id);
+    if (!entry) return;
+
+    const title  = document.getElementById('devEditTitle').value.trim();
+    const author = document.getElementById('devEditAuthor').value.trim();
+    const photos = entry.photos.map((p, i) => ({
+      ...p,
+      src: p._newSrc || p.src,
+      narrative: document.getElementById(`devEditNarrative${i}`).value.trim()
+    }));
+    // Clean up staging key
+    photos.forEach(p => delete p._newSrc);
+
+    try {
+      await sbFetch(`/entries?id=eq.${id}`, {
+        method: 'PATCH',
+        prefer: 'return=minimal',
+        body: JSON.stringify({ title, author, photos })
+      });
+      entries = await dbLoadEntries();
+      document.getElementById('devEditForm').remove();
+      buildDevPanel();
+      showToast('Entry updated.');
+    } catch(e) {
+      showToast('Save failed: ' + e.message);
+    }
+  }
+
+  init();
 </script>
 </body>
 </html>
