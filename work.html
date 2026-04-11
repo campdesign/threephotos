@@ -299,16 +299,8 @@
     </div>
   </div>
 
-  <!--
-    ── ARTWORK ──────────────────────────────────────────────────────
-    When your AI-generated artwork is ready, replace this comment with:
-
-    <img src="your-artwork.jpg"
-         alt="The Work — Three Photos"
-         style="width:min(800px,92vw);margin:0 auto 48px;display:block;filter:brightness(0.9);" />
-
-    ────────────────────────────────────────────────────────────────
-  -->
+  <!-- Artwork slot — auto-populated when generated, or replace manually -->
+  <div id="artworkSlot" style="width:min(800px,92vw);margin:0 auto 48px;"></div>
 
   <a class="back-link" href="/">Return to Three Photos</a>
 
@@ -382,6 +374,23 @@
   // ── LOAD DATA FROM SUPABASE
   async function loadData() {
     try {
+      // Load artwork URL if generated
+      const artRes = await fetch(`${SB_URL}/rest/v1/settings?key=eq.artwork_url&select=value`, {
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+      });
+      const artData = await artRes.json();
+      if (artData && artData[0] && artData[0].value) {
+        const artworkUrl = artData[0].value;
+        const artEl = document.getElementById('artworkSlot');
+        if (artEl) {
+          // Determine if video or image
+          const isVideo = artworkUrl.match(/\.(mp4|webm|mov)/i);
+          artEl.innerHTML = isVideo
+            ? `<video autoplay loop muted playsinline style="width:100%;display:block;"><source src="${artworkUrl}" /></video>`
+            : `<img src="${artworkUrl}" alt="The Work" style="width:100%;display:block;filter:brightness(0.92);" />`;
+        }
+      }
+
       const res = await fetch(`${SB_URL}/rest/v1/entries?select=*&order=created_at.desc`, {
         headers: {
           'apikey': SB_KEY,

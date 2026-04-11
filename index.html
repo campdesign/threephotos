@@ -1359,7 +1359,15 @@
   }
 
   function enterFromQuestion() {
-    if (milestoneReached()) { showMilestone(); return; }
+    // Auto-trigger artwork generation on milestone
+    if (milestoneReached()) {
+      fetch('/.netlify/functions/generate-artwork', { method: 'POST' })
+        .then(r => r.json())
+        .then(d => console.log('Artwork generation started:', d))
+        .catch(e => console.warn('Artwork trigger failed:', e));
+      showMilestone();
+      return;
+    }
     if (hasContributedToday()) {
       document.getElementById('contributedReturnNote').textContent = 'Come back tomorrow.';
       transition('screen-question', 'screen-contributed');
@@ -2288,6 +2296,7 @@
           <div class="dev-section-title">Animation</div>
           <div class="dev-actions">
             <button onclick="devTestShatter()" class="dev-btn dev-btn-gold">Test shatter</button>
+            <button onclick="devGenerateArtwork()" class="dev-btn dev-btn-gold">Generate artwork</button>
           </div>
         </div>
         <div class="dev-section">
@@ -2396,6 +2405,26 @@
     } catch(e) {
       showToast('Delete failed: ' + e.message);
     }
+  }
+
+  async function devGenerateArtwork() {
+    const btn = document.querySelector('[onclick="devGenerateArtwork()"]');
+    if (btn) { btn.textContent = 'Generating...'; btn.disabled = true; }
+    showToast('Artwork generation started — this takes 1-2 minutes.');
+    try {
+      const res  = await fetch('/.netlify/functions/generate-artwork', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        showToast('Artwork generated. Reload /work to see it.');
+        console.log('Artwork URL:', data.artworkUrl);
+      } else {
+        showToast('Generation failed: ' + (data.error || 'unknown error'));
+        console.error(data);
+      }
+    } catch(e) {
+      showToast('Function error: ' + e.message);
+    }
+    if (btn) { btn.textContent = 'Generate artwork'; btn.disabled = false; }
   }
 
   async function devSeedEntries() {

@@ -1,3 +1,12 @@
+[build]
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+[functions."generate-artwork"]
+  timeout = 180
+
 [[redirects]]
   from = "/work"
   to = "/work.html"
