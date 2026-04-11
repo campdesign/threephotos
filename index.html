@@ -1339,14 +1339,27 @@
   // Dev mode active when ?dev=1
   // Also supports ?dev=1&milestone=1 to jump to milestone screen
 
+  function showMilestone() {
+    document.getElementById('milestoneLink').href = MILESTONE_URL;
+    document.querySelectorAll('.screen').forEach(s => {
+      s.classList.remove('visible');
+      s.classList.add('hidden');
+      s.style.opacity = '0';
+      s.style.pointerEvents = 'none';
+    });
+    const ms = document.getElementById('screen-milestone');
+    ms.classList.remove('hidden');
+    ms.style.zIndex  = '500';
+    ms.style.opacity = '0';
+    ms.style.pointerEvents = 'all';
+    requestAnimationFrame(() => {
+      ms.style.transition = 'opacity 1.2s ease';
+      ms.style.opacity = '1';
+    });
+  }
+
   function enterFromQuestion() {
-    // Milestone takes priority over everything
-    if (milestoneReached()) {
-      document.getElementById('milestoneLink').href = MILESTONE_URL;
-      document.getElementById('screen-question').classList.add('visible');
-      setTimeout(() => transition('screen-question', 'screen-milestone'), 50);
-      return;
-    }
+    if (milestoneReached()) { showMilestone(); return; }
     if (hasContributedToday()) {
       document.getElementById('contributedReturnNote').textContent = 'Come back tomorrow.';
       transition('screen-question', 'screen-contributed');
@@ -1382,15 +1395,7 @@
   }
 
   function goToPhoto() {
-    if (milestoneReached()) {
-      const from = ['screen-question','screen-concept','screen-contributed',
-                    'screen-thankyou','screen-bridge','screen-submit-wrap'].find(id =>
-        document.getElementById(id).classList.contains('visible')
-      ) || 'screen-question';
-      document.getElementById('milestoneLink').href = MILESTONE_URL;
-      transition(from, 'screen-milestone');
-      return;
-    }
+    if (milestoneReached()) { showMilestone(); return; }
     const from = ['screen-question','screen-concept','screen-contributed','screen-bridge',
                   'screen-thankyou','screen-milestone'].find(id =>
       document.getElementById(id).classList.contains('visible')
@@ -1783,11 +1788,7 @@
     submitScreen.style.transition  = '';
 
     // Check milestone
-    if (milestoneReached()) {
-      document.getElementById('milestoneLink').href = MILESTONE_URL;
-      transition('screen-submit-wrap', 'screen-milestone');
-      return;
-    }
+    if (milestoneReached()) { showMilestone(); return; }
 
     // Populate thank-you screen milestone count
     const phCount = totalPhotoCount();
@@ -2241,11 +2242,7 @@
     // If milestone already reached, swap Enter button to go to milestone screen
     if (milestoneReached() && enterBtn) {
       enterBtn.textContent = 'View the work';
-      enterBtn.onclick = () => {
-        document.getElementById('milestoneLink').href = MILESTONE_URL;
-        document.getElementById('screen-question').classList.add('visible');
-        setTimeout(() => transition('screen-question', 'screen-milestone'), 50);
-      };
+      enterBtn.onclick = () => showMilestone();
     }
 
     // Dev panel — build after entries loaded
