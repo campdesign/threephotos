@@ -1361,7 +1361,7 @@
   function enterFromQuestion() {
     // Auto-trigger artwork generation on milestone
     if (milestoneReached()) {
-      fetch('/.netlify/functions/generate-artwork', { method: 'POST' })
+      fetch('/.netlify/functions/generate-artwork', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}' })
         .then(r => r.json())
         .then(d => console.log('Artwork generation started:', d))
         .catch(e => console.warn('Artwork trigger failed:', e));
@@ -2412,7 +2412,7 @@
     if (btn) { btn.textContent = 'Generating...'; btn.disabled = true; }
     showToast('Artwork generation started — this takes 1-2 minutes.');
     try {
-      const res  = await fetch('/.netlify/functions/generate-artwork', { method: 'POST' });
+      const res  = await fetch('/.netlify/functions/generate-artwork', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}' });
       const data = await res.json();
       if (data.success) {
         showToast('Artwork generated. Reload /work to see it.');
