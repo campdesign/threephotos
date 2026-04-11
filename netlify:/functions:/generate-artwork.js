@@ -1,18 +1,12 @@
 // netlify/functions/generate-artwork.js
-// Triggered automatically when 100th photo is submitted,
-// or manually via dev panel.
-//
-// Uses Replicate's Stable Video Diffusion to create
-// a morphing collage from the collective's photos and narratives.
 
-const SB_URL = process.env.SUPABASE_URL;
-const SB_KEY = process.env.SUPABASE_SERVICE_KEY;
+const SB_URL = 'https://fzeosiuwbhjnfzrobhkq.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6ZW9zaXV3YmhqbmZ6cm9iaGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4NDQ4MTYsImV4cCI6MjA5MTQyMDgxNn0.fi5UC3ccIPEfVsv3E9lz_00JdHinYJaDZX0wOqSmQp4';
 const REPLICATE_TOKEN = process.env.REPLICATE_TOKEN;
 
 exports.handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json'
   };
 
@@ -21,58 +15,46 @@ exports.handler = async (event) => {
   }
 
   try {
-    // ── 1. Load all entries from Supabase
+    // 1. Load entries
     const entriesRes = await fetch(
       `${SB_URL}/rest/v1/entries?select=*&order=created_at.asc`,
-      {
-        headers: {
-          'apikey': SB_KEY,
-          'Authorization': `Bearer ${SB_KEY}`
-        }
-      }
+      { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
     );
     const entries = await entriesRes.json();
+    console.log('Entries loaded:', entries.length);
 
     if (!Array.isArray(entries) || entries.length === 0) {
       return { statusCode: 400, headers, body: JSON.stringify({ error: 'No entries found' }) };
     }
 
-    // ── 2. Collect photo URLs and narratives
+    // 2. Collect photo URLs and narratives
     const photoUrls = [];
     const narrativeTexts = [];
 
     entries.forEach(entry => {
       entry.photos.forEach(photo => {
-        // Only use photos with real URLs (not base64 data URLs — too large for API)
-        if (photo.src && photo.src.startsWith('http')) {
-          photoUrls.push(photo.src);
-        }
-        if (photo.narrative && photo.narrative.trim()) {
-          narrativeTexts.push(photo.narrative.trim());
-        }
+        if (photo.src && photo.src.startsWith('http')) photoUrls.push(photo.src);
+        if (photo.narrative && photo.narrative.trim()) narrativeTexts.push(photo.narrative.trim());
       });
     });
 
-    // Pick up to 12 photos spread across the collective
+    console.log('Photos found:', photoUrls.length, 'Narratives:', narrativeTexts.length);
+
+    if (photoUrls.length === 0) {
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'No valid photo URLs found' }) };
+    }
+
+    // Pick up to 12 spread across the collective
     const step = Math.max(1, Math.floor(photoUrls.length / 12));
     const selectedPhotos = photoUrls.filter((_, i) => i % step === 0).slice(0, 12);
 
-    // ── 3. Build prompt from actual narratives
-    // Take key phrases from the first 20 narratives
-    const promptNarratives = narrativeTexts
-      .slice(0, 20)
-      .map(n => n.slice(0, 60))
-      .join('. ');
+    // 3. Build prompt
+    const promptNarratives = narrativeTexts.slice(0, 15).map(n => n.slice(0, 60)).join('. ');
+    const prompt = `Abstract undulating artwork made from human memory and photographs. Dark background, gold light, organic flowing forms, dreamlike and cinematic. ${promptNarratives}. Museum quality, painterly.`;
 
-    const prompt = `An abstract undulating digital artwork made from human memory. 
-Photographs dissolving and morphing into each other, organic and cinematic. 
-Dark background with gold light bleeding between images. 
-Flowing, dreamlike, deeply personal. 
-The memories behind these photographs: ${promptNarratives}. 
-Museum quality, painterly, slow undulation.`;
+    console.log('Calling Replicate with photo:', selectedPhotos[0]);
 
-    // ── 4. Call Replicate — using stable-diffusion-img2img for image composition
-    // Model: stability-ai/sdxl for high quality composite
+    // 4. Call Replicate - SDXL img2img
     const replicateRes = await fetch('https://api.replicate.com/v1/predictions', {
       method: 'POST',
       headers: {
@@ -80,13 +62,12 @@ Museum quality, painterly, slow undulation.`;
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        // Using SDXL to generate the artwork from the prompt + first photo as style ref
         version: 'da77bc59ee60423279fd632efb4795ab731d9e3ca9705ef3341091fb989b7eaf',
         input: {
           prompt,
-          image: selectedPhotos[0], // use first photo as style reference
-          prompt_strength: 0.7,
-          num_inference_steps: 50,
+          image: selectedPhotos[0],
+          prompt_strength: 0.75,
+          num_inference_steps: 40,
           guidance_scale: 7.5,
           width: 1024,
           height: 1024,
@@ -95,41 +76,34 @@ Museum quality, painterly, slow undulation.`;
     });
 
     const prediction = await replicateRes.json();
+    console.log('Replicate prediction:', prediction.id, prediction.status, prediction.error);
 
     if (!prediction.id) {
-      console.error('Replicate error:', prediction);
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({ error: 'Replicate failed', detail: prediction })
-      };
+      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Replicate rejected request', detail: prediction }) };
     }
 
-    // ── 5. Poll for completion (Replicate is async)
+    // 5. Poll for completion
     let result = prediction;
     let attempts = 0;
-    const MAX_ATTEMPTS = 60; // 2 minutes max
 
-    while (result.status !== 'succeeded' && result.status !== 'failed' && attempts < MAX_ATTEMPTS) {
-      await new Promise(r => setTimeout(r, 2000));
+    while (result.status !== 'succeeded' && result.status !== 'failed' && attempts < 60) {
+      await new Promise(r => setTimeout(r, 3000));
       const pollRes = await fetch(`https://api.replicate.com/v1/predictions/${result.id}`, {
         headers: { 'Authorization': `Token ${REPLICATE_TOKEN}` }
       });
       result = await pollRes.json();
+      console.log(`Poll ${attempts}: ${result.status}`);
       attempts++;
     }
 
     if (result.status !== 'succeeded' || !result.output) {
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({ error: 'Generation failed', status: result.status })
-      };
+      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Generation failed', status: result.status, logs: result.logs }) };
     }
 
     const artworkUrl = Array.isArray(result.output) ? result.output[0] : result.output;
+    console.log('Artwork generated:', artworkUrl);
 
-    // ── 6. Save artwork URL to Supabase settings table
+    // 6. Save to Supabase settings
     await fetch(`${SB_URL}/rest/v1/settings`, {
       method: 'POST',
       headers: {
@@ -141,24 +115,14 @@ Museum quality, painterly, slow undulation.`;
       body: JSON.stringify({ key: 'artwork_url', value: artworkUrl })
     });
 
-    // ── 7. Return success
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({
-        success: true,
-        artworkUrl,
-        photosUsed: selectedPhotos.length,
-        narrativesUsed: Math.min(20, narrativeTexts.length)
-      })
+      body: JSON.stringify({ success: true, artworkUrl, photosUsed: selectedPhotos.length })
     };
 
   } catch (err) {
     console.error('Function error:', err);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: err.message })
-    };
+    return { statusCode: 500, headers, body: JSON.stringify({ error: err.message }) };
   }
 };
