@@ -1302,7 +1302,9 @@
 
   function milestoneReached() {
     if (DEV && new URLSearchParams(window.location.search).get('milestone') === '1') return true;
-    return totalPhotoCount() >= MILESTONE;
+    const count = totalPhotoCount();
+    if (DEV) console.log(`[Dev] entries: ${entries.length}, photos: ${count}, milestone: ${count >= MILESTONE}`);
+    return count >= MILESTONE;
   }
 
   // Draft state
