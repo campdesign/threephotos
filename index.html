@@ -1338,8 +1338,13 @@
   // Also supports ?dev=1&milestone=1 to jump to milestone screen
 
   function enterFromQuestion() {
+    // Milestone takes priority over everything
+    if (milestoneReached()) {
+      document.getElementById('milestoneLink').href = MILESTONE_URL;
+      transition('screen-question', 'screen-milestone');
+      return;
+    }
     if (hasContributedToday()) {
-      // Already contributed — skip submission, go to contributed screen
       document.getElementById('contributedReturnNote').textContent = 'Come back tomorrow.';
       transition('screen-question', 'screen-contributed');
       return;
@@ -1377,14 +1382,14 @@
   function goToPhoto() {
     if (milestoneReached()) {
       const from = ['screen-question','screen-concept','screen-contributed',
-                    'screen-thankyou','screen-bridge'].find(id =>
+                    'screen-thankyou','screen-bridge','screen-submit-wrap'].find(id =>
         document.getElementById(id).classList.contains('visible')
-      ) || 'screen-bridge';
+      ) || 'screen-question';
       document.getElementById('milestoneLink').href = MILESTONE_URL;
       transition(from, 'screen-milestone');
       return;
     }
-    const from = ['screen-concept','screen-contributed','screen-bridge',
+    const from = ['screen-question','screen-concept','screen-contributed','screen-bridge',
                   'screen-thankyou','screen-milestone'].find(id =>
       document.getElementById(id).classList.contains('visible')
     ) || 'screen-bridge';
