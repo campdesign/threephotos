@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Work — Three Photos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Instrument+Sans:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:  #0a0a0b;
+      --gold:   #c9a96e;
+      --dim:    #6b6762;
+      --muted:  #3a3835;
+      --white:  #f0ece5;
+      --serif:  'Cormorant Garamond', Georgia, serif;
+      --sans:   'Instrument Sans', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--sans);
+      font-weight: 300;
+    }
+
+    /* grain */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9000;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 40px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(32px, 5vw, 64px);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 32px;
+      max-width: 700px;
+      text-wrap: balance;
+    }
+
+    /* ── Artwork container ── */
+    /* Replace the placeholder below with your actual generated image */
+    .artwork-wrap {
+      width: min(800px, 92vw);
+      aspect-ratio: 1;
+      position: relative;
+      margin: 0 auto 48px;
+      overflow: hidden;
+    }
+
+    .artwork-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        135deg,
+        #0d0d10 0%,
+        #1a1215 20%,
+        #0f1a1f 40%,
+        #1a1510 60%,
+        #0d0d10 80%,
+        #1a1018 100%
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Animated undulating placeholder — replace with <img> when artwork is ready */
+    .artwork-placeholder canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .artwork-coming {
+      position: relative;
+      z-index: 2;
+      font-family: var(--serif);
+      font-size: clamp(18px, 2.5vw, 28px);
+      font-style: italic;
+      color: rgba(201,169,110,0.6);
+      text-align: center;
+      line-height: 1.6;
+      max-width: 400px;
+      padding: 0 20px;
+    }
+
+    .description {
+      font-size: 15px;
+      line-height: 1.9;
+      color: var(--dim);
+      max-width: 520px;
+      margin: 0 auto 40px;
+      text-wrap: pretty;
+    }
+
+    .description em {
+      font-family: var(--serif);
+      font-style: italic;
+      color: var(--white);
+    }
+
+    .rule {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      margin: 0 auto 32px;
+    }
+
+    .back-link {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid var(--muted);
+      padding-bottom: 2px;
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .back-link:hover { color: var(--gold); border-color: var(--gold); }
+
+    .credit {
+      margin-top: 60px;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <p class="eyebrow">Three Photos — 100 Photographs</p>
+
+  <h1>Something made from everything you gave.</h1>
+
+  <div class="artwork-wrap">
+    <!--
+      SWAP THIS for your actual artwork when it's ready:
+      <img src="your-artwork.jpg" alt="The Work" style="width:100%;height:100%;object-fit:cover;" />
+
+      Until then, the animated placeholder below holds the space.
+    -->
+    <div class="artwork-placeholder">
+      <canvas id="artCanvas"></canvas>
+      <p class="artwork-coming">
+        One hundred photographs.<br>
+        One hundred stories chosen carefully.<br><br>
+        The work is being made.
+      </p>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <p class="description">
+    One hundred people were asked for three photographs. These are what they gave.
+    From every image, every memory, every story recorded in the dark —
+    <em>something has been made.</em>
+    An AI-generated work, shaped entirely by the collective.
+  </p>
+
+  <a class="back-link" href="/">Return to Three Photos</a>
+
+  <p class="credit">
+    Three Photos &nbsp;·&nbsp; A Memory Archive<br>
+    100 Photographs &nbsp;·&nbsp; 100 Stories
+  </p>
+
+</div>
+
+<script>
+  // Animated undulating placeholder canvas
+  // Remove this when you replace with the real artwork image
+  const canvas = document.getElementById('artCanvas');
+  const ctx    = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let t = 0;
+
+  function draw() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    // Dark background
+    ctx.fillStyle = '#0d0d10';
+    ctx.fillRect(0, 0, W, H);
+
+    // Undulating gold waves
+    const waves = [
+      { amp: 0.12, freq: 2.1, phase: 0,    alpha: 0.06, color: '#c9a96e' },
+      { amp: 0.08, freq: 3.3, phase: 1.2,  alpha: 0.04, color: '#8b6a3a' },
+      { amp: 0.15, freq: 1.7, phase: 2.4,  alpha: 0.05, color: '#c9a96e' },
+      { amp: 0.06, freq: 4.1, phase: 0.8,  alpha: 0.03, color: '#e8d0a0' },
+      { amp: 0.10, freq: 2.7, phase: 3.1,  alpha: 0.04, color: '#6b4a2a' },
+    ];
+
+    waves.forEach(w => {
+      ctx.beginPath();
+      for (let x = 0; x <= W; x += 2) {
+        const y = H/2
+          + Math.sin(x/W * Math.PI * w.freq + t + w.phase) * H * w.amp
+          + Math.sin(x/W * Math.PI * w.freq * 0.5 + t * 0.7 + w.phase) * H * w.amp * 0.5;
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = w.color;
+      ctx.globalAlpha = w.alpha;
+      ctx.lineWidth   = 1.5;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    });
+
+    // Radial glow
+    const grd = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, W * 0.5);
+    grd.addColorStop(0,   'rgba(201,169,110,0.04)');
+    grd.addColorStop(0.5, 'rgba(201,169,110,0.01)');
+    grd.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, W, H);
+
+    t += 0.008;
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+</script>
+</body>
+</html>

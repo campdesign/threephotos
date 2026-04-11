@@ -1289,7 +1289,7 @@
   // ─── DATA
   const STEPS = 7;
   const MILESTONE = 100;
-  const MILESTONE_URL = 'https://threephotos.netlify.app';
+  const MILESTONE_URL = 'https://threephotos.netlify.app/work';
 
   let entries = [];
 
@@ -2230,6 +2230,15 @@
     }
 
     if (enterBtn && !DEV) { enterBtn.textContent = 'Begin'; enterBtn.disabled = false; }
+
+    // If milestone already reached, swap Enter button to go to milestone screen
+    if (milestoneReached() && enterBtn) {
+      enterBtn.textContent = 'View the work';
+      enterBtn.onclick = () => {
+        document.getElementById('milestoneLink').href = MILESTONE_URL;
+        transition('screen-question', 'screen-milestone');
+      };
+    }
 
     // Dev panel — build after entries loaded
     if (DEV) buildDevPanel();
