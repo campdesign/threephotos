@@ -1343,7 +1343,8 @@
     // Milestone takes priority over everything
     if (milestoneReached()) {
       document.getElementById('milestoneLink').href = MILESTONE_URL;
-      transition('screen-question', 'screen-milestone');
+      document.getElementById('screen-question').classList.add('visible');
+      setTimeout(() => transition('screen-question', 'screen-milestone'), 50);
       return;
     }
     if (hasContributedToday()) {
@@ -1351,7 +1352,6 @@
       transition('screen-question', 'screen-contributed');
       return;
     }
-    // First visit today — go straight into submission
     resetDraft();
     currentStep = 1;
     updateSubmitUI();
@@ -2243,7 +2243,8 @@
       enterBtn.textContent = 'View the work';
       enterBtn.onclick = () => {
         document.getElementById('milestoneLink').href = MILESTONE_URL;
-        transition('screen-question', 'screen-milestone');
+        document.getElementById('screen-question').classList.add('visible');
+        setTimeout(() => transition('screen-question', 'screen-milestone'), 50);
       };
     }
 
