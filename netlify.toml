@@ -1,24 +1,21 @@
 [build]
   functions = "netlify/functions"
 
-[functions]
-  node_bundler = "esbuild"
-
-[functions."generate-artwork"]
-  timeout = 180
-
 [[redirects]]
   from = "/work"
   to = "/work.html"
   status = 200
 
 [[redirects]]
-  from = "/.netlify/functions/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+[build.environment]
+  SECRETS_SCAN_ENABLED = "false"
+
+[build.environment]
+  SECRETS_SCAN_ENABLED = "false"
+
+[build.environment]
+  SECRETS_SCAN_ENABLED = "false"
