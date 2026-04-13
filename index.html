@@ -72,9 +72,234 @@
       max-width: 600px;
       line-height: 1.45;
       text-wrap: balance;
-      opacity: 0;
-      animation: rise 2.2s cubic-bezier(0.4,0,0.2,1) 0.4s forwards;
+      transition: opacity 2s ease;
     }
+
+    /* Elegant enter button */
+    .question-enter-wrap {
+      position: absolute;
+      bottom: 52px;
+      left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column;
+      align-items: center; gap: 18px;
+      transition: opacity 1.5s ease;
+    }
+    .question-enter-btn {
+      background: none; border: none;
+      cursor: pointer; padding: 8px 0;
+    }
+    .question-enter-inner {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .question-enter-line {
+      display: block;
+      width: 32px; height: 1px;
+      background: rgba(201,169,110,0.4);
+      transition: width 0.4s ease, background 0.4s ease;
+    }
+    .question-enter-text {
+      font-family: var(--sans);
+      font-size: 9px; letter-spacing: 0.36em;
+      text-transform: uppercase; color: var(--dim);
+      transition: color 0.4s ease;
+    }
+    .question-enter-btn:hover .question-enter-line {
+      width: 48px; background: var(--gold);
+    }
+    .question-enter-btn:hover .question-enter-text { color: var(--gold); }
+
+    /* Artist statement link */
+    .artist-statement-link {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--sans); font-size: 9px;
+      letter-spacing: 0.14em; color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      padding-bottom: 1px;
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .artist-statement-link:hover { color: var(--dim); border-color: var(--muted); }
+
+    /* Artist statement modal */
+    .artist-modal {
+      position: fixed; inset: 0; z-index: 8000;
+      background: rgba(10,10,11,0.92);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      animation: fadeIn 0.4s ease;
+    }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    .artist-modal-inner {
+      background: var(--card);
+      border: 1px solid var(--border);
+      max-width: 560px; width: 100%;
+      max-height: 85vh; overflow-y: auto;
+      padding: 40px; position: relative;
+    }
+    .artist-modal-close {
+      position: absolute; top: 16px; right: 20px;
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 14px;
+      transition: color 0.2s;
+    }
+    .artist-modal-close:hover { color: var(--white); }
+    .artist-modal-eyebrow {
+      font-size: 9px; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .artist-modal-title {
+      font-family: var(--serif); font-size: clamp(22px, 3vw, 32px);
+      font-weight: 300; color: var(--white);
+      margin-bottom: 28px;
+    }
+    .artist-modal-body {
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .artist-modal-body p {
+      font-size: 14px; line-height: 1.85;
+      color: var(--dim); font-weight: 300;
+    }
+    .artist-modal-rule {
+      height: 1px; background: var(--border);
+      margin: 8px 0;
+    }
+    .artist-modal-intent-title {
+      font-size: 9px !important;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold) !important;
+      margin-bottom: -4px;
+    }
+    .artist-modal-contact {
+      display: flex; gap: 24px; flex-wrap: wrap;
+      padding-top: 4px;
+    }
+    .artist-modal-contact a {
+      font-size: 11px; color: var(--dim);
+      text-decoration: none; letter-spacing: 0.06em;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1px;
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .artist-modal-contact a:hover { color: var(--gold); border-color: var(--gold); }
+      position: absolute;
+      bottom: 100px;
+      left: 50%; transform: translateX(-50%);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+      transition: opacity 1s ease;
+    }
+    .live-counter span { color: var(--gold); }
+
+    /* Complete message on question screen */
+    .complete-message {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 12px;
+      margin-top: 28px;
+      transition: opacity 1.5s ease;
+    }
+    .complete-rule {
+      width: 40px; height: 1px;
+      background: rgba(201,169,110,0.4);
+      margin-bottom: 4px;
+    }
+    .complete-eyebrow {
+      font-size: 9px; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--gold);
+    }
+    .complete-text {
+      font-family: var(--serif); font-style: italic;
+      font-size: clamp(14px, 1.6vw, 17px);
+      color: var(--dim); line-height: 1.7;
+      text-align: center; max-width: 360px;
+      text-wrap: pretty;
+    }
+
+    /* Milestone complete message on question screen */
+    .complete-message {
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+      margin-top: 28px; text-align: center;
+      transition: opacity 1.5s ease;
+    }
+    .complete-rule {
+      width: 40px; height: 1px;
+      background: rgba(201,169,110,0.4);
+      margin-bottom: 4px;
+    }
+    .complete-eyebrow {
+      font-size: 9px; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--gold);
+    }
+    .complete-text {
+      font-family: var(--serif); font-style: italic;
+      font-size: clamp(14px, 1.6vw, 17px);
+      color: var(--dim); line-height: 1.7;
+      max-width: 340px; text-wrap: pretty;
+    }
+
+    /* Live counter */
+    .live-counter {
+      position: absolute;
+      bottom: 120px;
+      left: 50%; transform: translateX(-50%);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+      transition: opacity 1s ease;
+    }
+    .live-counter span { color: var(--gold); }
+
+    /* Bridge screen */
+    .bridge-inner {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 60px 40px;
+      max-width: 580px; margin: 0 auto;
+    }
+      font-size: 9px; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 48px; opacity: 0;
+      animation: rise 1s ease 0.3s forwards;
+    }
+    .bridge-narrative-wrap {
+      min-height: 120px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      margin-bottom: 48px;
+    }
+    .bridge-narrative {
+      font-family: var(--serif); font-size: clamp(20px, 3vw, 36px);
+      font-weight: 300; font-style: italic;
+      color: var(--white); line-height: 1.5;
+      text-wrap: balance; text-align: center;
+      opacity: 0; transition: opacity 1.5s ease;
+    }
+    .bridge-narrative.visible { opacity: 1; }
+    .bridge-attrib {
+      font-size: 9px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--muted);
+      margin-top: 16px; opacity: 0;
+      transition: opacity 1s ease 0.5s;
+    }
+    .bridge-attrib.visible { opacity: 1; }
+    .bridge-rule {
+      width: 1px; height: 48px;
+      background: linear-gradient(to bottom, rgba(201,169,110,0.4), transparent);
+      margin: 0 auto 28px;
+      opacity: 0; animation: rise 1s ease 0.8s forwards;
+    }
+    .bridge-caption {
+      font-family: var(--serif); font-size: clamp(14px, 1.6vw, 18px);
+      font-style: italic; color: var(--dim);
+      opacity: 0; animation: rise 1s ease 1s forwards;
+    }
+
     @keyframes rise {
       from { opacity:0; transform:translateY(14px); }
       to   { opacity:1; transform:translateY(0); }
@@ -88,12 +313,8 @@
       line-height: 1.8;
       letter-spacing: 0.01em;
       margin-top: 20px;
-      opacity: 0;
-      animation: rise 1.6s cubic-bezier(0.4,0,0.2,1) 2s forwards;
       text-wrap: pretty;
     }
-
-    .screen-enter {
       position: absolute; bottom: 48px;
       background: none; border: none;
       font-family: var(--sans); font-size: 10px;
@@ -418,14 +639,18 @@
 
     /* Photo upload step */
     .step-photo-box {
-      width: min(380px, 88vw); aspect-ratio: 4/3;
+      width: min(380px, 88vw);
       background: var(--card); border: 1px solid var(--border);
       position: relative; overflow: hidden;
       display: flex; align-items: center; justify-content: center;
+      min-height: 120px;
+      transition: all 0.4s ease;
     }
+    /* Before photo loaded — show placeholder at fixed ratio */
+    .step-photo-box.empty { aspect-ratio: 4/3; }
     .step-photo-box img {
-      position: absolute; inset: 0; width: 100%; height: 100%;
-      object-fit: cover; filter: brightness(0.85) saturate(0.78);
+      width: 100%; height: auto; display: block;
+      filter: brightness(0.88) saturate(0.82);
     }
     .upload-placeholder {
       display: flex; flex-direction: column;
@@ -630,45 +855,73 @@
     #screen-milestone {
       z-index: 300;
     }
-    .milestone-content {
-      max-width: 520px;
+    /* ─── CORRIDOR ─── */
+    #corridorCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+    }
+    .corridor-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .corridor-text-wrap {
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 24px;
+      gap: 20px;
+      pointer-events: all;
+      max-width: 520px;
+      padding: 0 40px;
     }
-    .milestone-eyebrow {
-      font-size: 9px;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--gold);
+    .corridor-eyebrow {
+      font-size: 9px; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--gold);
+      opacity: 0; transition: opacity 1.5s ease;
     }
-    .milestone-title {
+    .corridor-eyebrow.show { opacity: 1; }
+    .corridor-title {
       font-family: var(--serif);
-      font-size: clamp(26px, 3vw, 38px);
-      font-weight: 300;
-      color: var(--white);
-      text-wrap: balance;
+      font-size: clamp(28px, 4vw, 52px);
+      font-weight: 300; color: var(--white);
+      line-height: 1.1; text-wrap: balance;
+      opacity: 0; transition: opacity 2s ease;
     }
-    .milestone-text {
-      font-size: 14px;
-      line-height: 1.85;
-      color: var(--dim);
-      max-width: 380px;
-      text-wrap: pretty;
+    .corridor-title.show { opacity: 1; }
+    .corridor-rule {
+      width: 1px; height: 0;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      transition: height 1.5s ease;
     }
+    .corridor-rule.show { height: 60px; }
+    .corridor-sub {
+      font-family: var(--serif); font-style: italic;
+      font-size: clamp(15px, 1.8vw, 20px);
+      color: var(--dim); line-height: 1.7;
+      max-width: 400px; text-wrap: pretty;
+      opacity: 0; transition: opacity 1.5s ease;
+    }
+    .corridor-sub.show { opacity: 1; }
+    .corridor-actions {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 4px;
+      opacity: 0; transition: opacity 1.5s ease;
+    }
+    .corridor-actions.show { opacity: 1; }
     .milestone-link {
       display: inline-block;
       border: 1px solid var(--gold-dim);
-      color: var(--gold);
-      padding: 12px 28px;
-      font-family: var(--sans);
-      font-size: 10px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      text-decoration: none;
-      transition: all 0.3s var(--ease);
+      color: var(--gold); padding: 12px 28px;
+      font-family: var(--sans); font-size: 10px;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      text-decoration: none; transition: all 0.3s var(--ease);
     }
     .milestone-link:hover { background: var(--gold-dim); border-color: var(--gold); }
 
@@ -918,9 +1171,53 @@
 
 <!-- Screen 1: The question -->
 <div class="screen visible" id="screen-question">
-  <p class="question-text">If you had three photographs to explain your life,&nbsp;which would&nbsp;you&nbsp;choose?</p>
-  <p class="question-sub">Choose three. Record or write a memory for each one. Then see what others&nbsp;gave.</p>
-  <button class="screen-enter" onclick="enterFromQuestion()">Begin</button>
+  <p class="question-text" id="questionText" style="opacity:0;">If you had three photographs to share, which would&nbsp;you&nbsp;choose?</p>
+  <p class="question-sub" id="questionSub" style="opacity:0;">Choose three. Record or write a memory for each one.<br>Then see what others&nbsp;gave.</p>
+  <!-- Shown only after 100 photos reached -->
+  <div class="complete-message" id="completeMessage" style="display:none;opacity:0;">
+    <div class="complete-rule"></div>
+    <p class="complete-eyebrow">The collective is complete.</p>
+    <p class="complete-text">One hundred photographs have been given.<br>The visualization is ready. Look for more&nbsp;creations&nbsp;later.</p>
+  </div>
+  <div class="question-enter-wrap" id="questionEnterWrap" style="opacity:0;">
+    <button class="question-enter-btn" id="questionEnterBtn" onclick="enterFromQuestion()">
+      <span class="question-enter-inner">
+        <span class="question-enter-line"></span>
+        <span class="question-enter-text" id="questionEnterText">Begin</span>
+        <span class="question-enter-line"></span>
+      </span>
+    </button>
+    <button class="artist-statement-link" onclick="showArtistStatement()">Artist's statement</button>
+  </div>
+</div>
+
+<!-- Artist statement modal -->
+<div class="artist-modal" id="artistModal" style="display:none;" onclick="hideArtistStatement()">
+  <div class="artist-modal-inner" onclick="event.stopPropagation()">
+    <button class="artist-modal-close" onclick="hideArtistStatement()">&#10005;</button>
+    <p class="artist-modal-eyebrow">Three Photos</p>
+    <h2 class="artist-modal-title">Artist's Statement</h2>
+    <div class="artist-modal-body">
+      <p>Three Photos began with a simple premise: that a life, however complex, might be held in three images. Not the best photographs. Not the most beautiful. The ones that matter.</p>
+      <p>Contributors were asked to choose three photographs and record a memory for each — spoken or written, in their own words, in their own time. No prompts. No editing. What surfaced was a collective archive of the ordinary made extraordinary by attention.</p>
+      <p>Each day, one photograph from the collective finds a visitor. Unannounced. Without context. The story reveals itself slowly, the way memory does.</p>
+      <p>When one hundred people have contributed, the archive closes and something is made from it — an image generated from the emotional residue of everything given. That work exists nowhere else.</p>
+      <div class="artist-modal-rule"></div>
+      <p class="artist-modal-intent-title">On your photographs</p>
+      <p>By contributing to Three Photos, you grant permission for your photographs and narratives to appear within this project — surfacing anonymously to visitors on a rotating daily basis, and as source material for the collective artwork generated at 100 contributions.</p>
+      <p>Your photographs will not be used for commercial purposes, sold, licensed to third parties, or used to train AI models. They exist here, and only here, as part of this work.</p>
+      <p>You may request removal of your contribution at any time by contacting the artist directly.</p>
+      <div class="artist-modal-rule"></div>
+      <p class="artist-modal-intent-title">About the artist</p>
+      <p>Kevin Mann (aka Forgery) is a conceptual artist shaped by a career in advertising, where he worked and taught as a creative director, developing ideas designed to resonate, persuade, and stay with people. That foundation carries into his artistic practice, where he applies the same precision of message and visual impact to more open-ended questions.</p>
+      <p>His work explores memory, perception, and conversation, often blurring the line between personal experience and shared narrative. Drawing on the language of marketing and design, he creates images that feel familiar at first glance but reveal more complex, sometimes uneasy meanings on closer inspection.</p>
+      <p>Mann's practice is grounded in a simple idea: the same tools used to shape belief in the commercial world can be repurposed to question it.</p>
+      <div class="artist-modal-contact">
+        <a href="/cdn-cgi/l/email-protection#563d33203f381635373b263233253f313878383322"><span class="__cf_email__" data-cfemail="c8a3adbea1a688aba9a5b8acadbba1afa6e6a6adbc">[email&#160;protected]</span></a>
+        <a href="https://forgeryai.netlify.app/" target="_blank">forgeryai.netlify.app</a>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Screen 2: The concept (reached from 'about' or on return) -->
@@ -947,16 +1244,14 @@
 <div class="screen" id="screen-contributed">
   <div class="concept-body">
     <div class="concept-rule"></div>
-    <h1 class="concept-title" style="font-size:clamp(22px,2.5vw,32px);letter-spacing:0.04em;">You've already<br>contributed today.</h1>
-    <p class="concept-text">
-      Three Photos accepts one contribution per&nbsp;day.<br><br>
+    <h1 class="concept-title" id="contributedTitle" style="font-size:clamp(22px,2.5vw,32px);letter-spacing:0.04em;">You've already<br>contributed.</h1>
+    <p class="concept-text" id="contributedText">
       <em>Your photographs are now part of something larger.</em><br><br>
-      Come back tomorrow. A new photograph will be waiting, and so will the chance to add&nbsp;another&nbsp;story.
+      <span id="contributedReturnNote"></span>
     </p>
     <div class="concept-rule-bottom"></div>
-    <p class="concept-count" id="contributedReturnNote"></p>
   </div>
-  <button class="screen-enter" onclick="goToPhoto()">See today's photo</button>
+  <button class="screen-enter" id="contributedBtn" onclick="goToPhoto()">See today's photograph</button>
 </div>
 
 <!-- Screen 2c: Thank you / email capture (shown after publishing) -->
@@ -984,15 +1279,14 @@
 
 <!-- Screen 2d: Bridge — give first, now receive -->
 <div class="screen" id="screen-bridge">
-  <div class="concept-body">
-    <div class="concept-rule"></div>
-    <h1 class="concept-title" style="font-size:clamp(20px,2.4vw,30px);">Now see what<br>others gave.</h1>
-    <p class="concept-text">
-      Every photograph in Three Photos was chosen deliberately.<br><br>
-      <em>One will find you today.</em><br><br>
-      Each day a single photograph surfaces from the collective — unannounced, unordered. Like a memory you didn't plan&nbsp;on&nbsp;having.
-    </p>
-    <div class="concept-rule-bottom"></div>
+  <div class="bridge-inner">
+    <p class="bridge-eyebrow">From the collective</p>
+    <div class="bridge-narrative-wrap" id="bridgeNarrativeWrap">
+      <p class="bridge-narrative" id="bridgeNarrative"></p>
+      <p class="bridge-attrib" id="bridgeAttrib"></p>
+    </div>
+    <div class="bridge-rule"></div>
+    <p class="bridge-caption">One will find you today.</p>
   </div>
   <button class="screen-enter" onclick="goToPhoto()">See today's photograph</button>
 </div>
@@ -1062,17 +1356,15 @@
 </div>
 </div><!-- /screen-submit-wrap -->
 
-<!-- Milestone screen — shown when 100 photos reached -->
+<!-- Milestone screen — corridor experience -->
 <div class="screen" id="screen-milestone">
-  <div class="milestone-content">
-    <p class="milestone-eyebrow">Three Photos — 100 Photographs</p>
-    <h1 class="milestone-title">The collective has spoken.</h1>
-    <p class="milestone-text">
-      One hundred photographs. One hundred stories chosen carefully.<br><br>
-      From them, something has been made. An image that holds the shape of everything contributed — every memory, every face, every place that mattered enough to keep.
-    </p>
-    <a class="milestone-link" id="milestoneLink" href="https://threephotos.netlify.app/work" target="_blank">View the work &rarr;</a>
-    <button class="screen-enter" onclick="goToPhoto()" style="position:relative;bottom:auto;margin-top:8px;">See today's photograph</button>
+  <canvas id="corridorCanvas"></canvas>
+  <!-- Floating word cloud overlay -->
+  <div id="wordCloud" style="position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden;"></div>
+  <!-- Final actions — appear after word cloud -->
+  <div class="corridor-actions" id="corridorActions" style="position:absolute;bottom:60px;left:50%;transform:translateX(-50%);z-index:4;opacity:0;transition:opacity 2s ease;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;">
+    <a class="milestone-link" id="milestoneLink" href="https://threephotos.netlify.app/work" target="_blank">Enter the work &rarr;</a>
+    <button class="screen-enter" onclick="goToPhoto()" style="position:relative;bottom:auto;margin-top:4px;">See today's photograph</button>
   </div>
 </div>
 
@@ -1094,7 +1386,7 @@
 
     <!-- Step 1: Photo 1 -->
     <div class="step-panel active" id="step-1">
-      <div class="step-photo-box" id="photoBox-1">
+      <div class="step-photo-box empty" id="photoBox-1">
         <div class="upload-placeholder">
           <div class="upload-placeholder-icon">&#9671;</div>
           <p>Your first photograph</p>
@@ -1126,7 +1418,7 @@
 
     <!-- Step 3: Photo 2 -->
     <div class="step-panel" id="step-3">
-      <div class="step-photo-box" id="photoBox-2">
+      <div class="step-photo-box empty" id="photoBox-2">
         <div class="upload-placeholder">
           <div class="upload-placeholder-icon">&#9671;</div>
           <p>Your second photograph</p>
@@ -1158,7 +1450,7 @@
 
     <!-- Step 5: Photo 3 -->
     <div class="step-panel" id="step-5">
-      <div class="step-photo-box" id="photoBox-3">
+      <div class="step-photo-box empty" id="photoBox-3">
         <div class="upload-placeholder">
           <div class="upload-placeholder-icon">&#9671;</div>
           <p>Your third photograph</p>
@@ -1230,7 +1522,7 @@
 
 <div class="toast" id="toast"></div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // ─── SUPABASE
   const SB_URL = 'https://fzeosiuwbhjnfzrobhkq.supabase.co';
   const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6ZW9zaXV3YmhqbmZ6cm9iaGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4NDQ4MTYsImV4cCI6MjA5MTQyMDgxNn0.fi5UC3ccIPEfVsv3E9lz_00JdHinYJaDZX0wOqSmQp4';
@@ -1340,6 +1632,9 @@
   // Also supports ?dev=1&milestone=1 to jump to milestone screen
 
   function showMilestone() {
+    // Mark corridor as seen for this session
+    sessionStorage.setItem('threephotos_corridor_seen', '1');
+
     document.getElementById('milestoneLink').href = MILESTONE_URL;
     document.querySelectorAll('.screen').forEach(s => {
       s.classList.remove('visible');
@@ -1355,21 +1650,31 @@
     requestAnimationFrame(() => {
       ms.style.transition = 'opacity 1.2s ease';
       ms.style.opacity = '1';
+      setTimeout(initCorridor, 400);
     });
   }
 
+  // ─── CORRIDOR SEEN FLAG
+  function hasSeenCorridor() {
+    try { return !!sessionStorage.getItem('threephotos_corridor_seen'); } catch(e) { return false; }
+  }
+  function markCorridorSeen() {
+    try { sessionStorage.setItem('threephotos_corridor_seen', '1'); } catch(e) {}
+  }
+
   function enterFromQuestion() {
-    // Auto-trigger artwork generation on milestone
     if (milestoneReached()) {
-      fetch('/.netlify/functions/generate-artwork', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}' })
-        .then(r => r.json())
-        .then(d => console.log('Artwork generation started:', d))
-        .catch(e => console.warn('Artwork trigger failed:', e));
-      showMilestone();
+      if (!hasSeenCorridor()) {
+        markCorridorSeen();
+        showMilestone(); // corridor auto-flows to /work when done
+      } else {
+        window.location.href = MILESTONE_URL;
+      }
       return;
     }
     if (hasContributedToday()) {
-      document.getElementById('contributedReturnNote').textContent = 'Come back tomorrow.';
+      const note  = document.getElementById('contributedReturnNote');
+      if (note) note.textContent = 'Come back tomorrow. Another photograph will be waiting.';
       transition('screen-question', 'screen-contributed');
       return;
     }
@@ -1400,6 +1705,8 @@
 
   function goToBridge() {
     transition('screen-thankyou', 'screen-bridge');
+    // Start surfacing narratives on bridge screen
+    setTimeout(animateBridgeNarrative, 500);
   }
 
   function goToPhoto() {
@@ -1795,8 +2102,20 @@
     submitScreen.style.background  = '';
     submitScreen.style.transition  = '';
 
-    // Check milestone
-    if (milestoneReached()) { showMilestone(); return; }
+    // Check milestone — fire emails and artwork generation
+    if (milestoneReached()) {
+      // Fire artwork generation
+      fetch('/.netlify/functions/generate-artwork', {
+        method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}'
+      }).then(r=>r.json()).then(d=>console.log('Artwork:', d)).catch(e=>console.warn(e));
+      // Send milestone email to all subscribers
+      fetch('/.netlify/functions/send-notification', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ type: 'milestone' })
+      }).then(r=>r.json()).then(d=>console.log('Emails sent:', d)).catch(e=>console.warn(e));
+      showMilestone();
+      return;
+    }
 
     // Populate thank-you screen milestone count
     const phCount = totalPhotoCount();
@@ -1824,12 +2143,25 @@
     try {
       await dbInsertEmail(val);
     } catch(e) {
-      // Unique constraint means already subscribed — that's fine
       console.warn('Email insert:', e.message);
     }
 
+    // Send confirmation email via Resend
+    fetch('/.netlify/functions/send-notification', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'confirmation', email: val })
+    }).catch(e => console.warn('Confirmation email failed:', e));
+
     document.getElementById('emailCapture').style.display = 'none';
     document.getElementById('emailConfirmed').style.display = 'block';
+
+    // Send welcome email via Resend
+    fetch('/.netlify/functions/send-notification', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'welcome', email: val })
+    }).catch(e => console.warn('Welcome email failed:', e));
   }
 
   // ─── PHOTO HANDLING
@@ -1841,9 +2173,10 @@
       const src = e.target.result;
       draftPhotos[slot - 1] = src;
 
-      // Show in box
+      // Show in box — natural aspect ratio, no crop
       const box = document.getElementById(`photoBox-${slot}`);
-      box.innerHTML = `<img src="${src}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(0.85) saturate(0.78);" />`;
+      box.classList.remove('empty');
+      box.innerHTML = `<img src="${src}" alt="" />`;
 
       // Update thumb
       const thumb = document.getElementById(`thumb-${slot}`);
@@ -1907,7 +2240,323 @@
     rec.on = false;
   }
 
-  // ─── SHATTER ANIMATION
+  // ─── QUESTION SCREEN FADE IN
+  function typewriterQuestion() {
+    const el      = document.getElementById('questionText');
+    const sub     = document.getElementById('questionSub');
+    const counter = document.getElementById('liveCounter');
+    const wrap    = document.getElementById('questionEnterWrap');
+    if (!el) return;
+
+    // Fade in question text
+    setTimeout(() => {
+      el.style.transition = 'opacity 2.2s ease';
+      el.style.opacity    = '1';
+    }, 300);
+
+    // Sub copy
+    setTimeout(() => {
+      sub.style.transition = 'opacity 1.6s ease';
+      sub.style.opacity    = '1';
+    }, 1800);
+
+    // Enter button + artist statement
+    setTimeout(() => {
+      wrap.style.transition = 'opacity 1.4s ease';
+      wrap.style.opacity    = '1';
+    }, 2800);
+
+    // Live counter
+    setTimeout(() => {
+      if (counter) {
+        counter.style.transition = 'opacity 1.2s ease';
+        counter.style.opacity    = '1';
+      }
+    }, 3600);
+  }
+
+  // ─── ARTIST STATEMENT
+  function showArtistStatement() {
+    const modal = document.getElementById('artistModal');
+    if (modal) modal.style.display = 'flex';
+  }
+
+  function hideArtistStatement() {
+    const modal = document.getElementById('artistModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  // ─── LIVE COUNTER — updates from entries
+  function updateLiveCounter() {
+    const el = document.getElementById('liveCount');
+    if (!el) return;
+    const count = totalPhotoCount();
+    if (count > 0) el.textContent = count;
+  }
+
+  // ─── BRIDGE NARRATIVE — surfaces random memories one at a time
+  function animateBridgeNarrative() {
+    if (!entries.length) return;
+
+    // Collect all narratives
+    const pool = [];
+    entries.forEach(e => e.photos.forEach(p => {
+      if (p.narrative && p.narrative.trim()) {
+        pool.push({ text: p.narrative.trim(), author: e.author || 'Anonymous' });
+      }
+    }));
+    if (!pool.length) return;
+
+    const narrativeEl = document.getElementById('bridgeNarrative');
+    const attribEl    = document.getElementById('bridgeAttrib');
+    if (!narrativeEl || !attribEl) return;
+
+    // Shuffle pool
+    pool.sort(() => Math.random() - 0.5);
+    let idx = 0;
+
+    function showNext() {
+      const n = pool[idx++ % pool.length];
+
+      // Fade out
+      narrativeEl.classList.remove('visible');
+      attribEl.classList.remove('visible');
+
+      setTimeout(() => {
+        narrativeEl.textContent = `"${n.text}"`;
+        attribEl.textContent    = n.author;
+        // Fade in
+        narrativeEl.classList.add('visible');
+        attribEl.classList.add('visible');
+        // Next after 5 seconds
+        setTimeout(showNext, 5000);
+      }, 1000);
+    }
+
+    // Start after a beat
+    setTimeout(showNext, 600);
+  }
+
+  // ─── CORRIDOR ANIMATION
+  function initCorridor() {
+    const canvas = document.getElementById('corridorCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const W = canvas.width, H = canvas.height;
+    const cx = W / 2, cy = H / 2;
+
+    const photoData = [];
+    entries.forEach(e => e.photos.forEach(p => {
+      if (p.src) photoData.push({ src: p.src, narrative: p.narrative || '', author: e.author || '' });
+    }));
+
+    if (!photoData.length) { showCorridorText(); return; }
+
+    let loaded = 0;
+    const imgs = [];
+    const toLoad = photoData.slice(0, 40);
+
+    toLoad.forEach((d) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = img.onerror = () => {
+        if (img.naturalWidth > 0) imgs.push({ img, ...d });
+        loaded++;
+        if (loaded === toLoad.length) startCorridor(ctx, canvas, W, H, cx, cy, imgs);
+      };
+      img.src = d.src;
+    });
+  }
+
+  function startCorridor(ctx, canvas, W, H, cx, cy, photoImgs) {
+    if (!photoImgs.length) { showCorridorText(); return; }
+
+    let progress = 0;
+    let speed    = 0.0008;
+    let done     = false;
+
+    const wallPhotos = photoImgs.map((p, i) => ({
+      ...p,
+      z:       0.04 + (i / photoImgs.length) * 0.88,
+      side:    i % 2 === 0 ? -1 : 1,
+      offsetY: (Math.random() - 0.5) * H * 0.28,
+      width:   Math.min(W, H) * (0.18 + Math.random() * 0.12),
+    }));
+
+    function render() {
+      if (done) return;
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#0a0a0b';
+      ctx.fillRect(0, 0, W, H);
+
+      // Perspective corridor lines
+      ctx.strokeStyle = 'rgba(201,169,110,0.04)';
+      ctx.lineWidth = 1;
+      for (let i = -4; i <= 4; i++) {
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(0, cy + i * H * 0.45); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(W, cy + i * H * 0.45); ctx.stroke();
+      }
+
+      // Vanishing point glow
+      const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(W,H) * 0.45);
+      grd.addColorStop(0, 'rgba(201,169,110,0.07)');
+      grd.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grd; ctx.fillRect(0, 0, W, H);
+
+      // Draw photos far-to-near
+      [...wallPhotos]
+        .sort((a, b) => Math.abs(b.z - progress) - Math.abs(a.z - progress))
+        .forEach(p => {
+          const relZ = p.z - progress;
+          if (relZ < -0.18 || relZ > 0.75) return;
+
+          const scale = relZ < 0
+            ? Math.max(0, 1 + relZ * 7)
+            : Math.min(3.5, 1 / (relZ * 3.5 + 0.28));
+          if (scale < 0.01) return;
+
+          const sideX  = cx + p.side * (cx * 0.62 + (relZ < 0 ? Math.abs(relZ) * W * 1.8 : 0));
+          const drawW  = p.width * scale;
+          const drawH  = drawW * 0.72;
+          const drawY  = cy + p.offsetY * (1 - Math.min(1, scale * 0.25)) - drawH / 2;
+          const drawX  = sideX - drawW / 2;
+          const blurPx = relZ < 0 ? 8 + Math.abs(relZ) * 28 : Math.max(0, relZ * 18 - 1.5);
+          const alpha  = relZ < 0
+            ? Math.max(0, 0.45 - Math.abs(relZ) * 3.5)
+            : Math.min(0.92, 1 - relZ * 1.1);
+
+          if (alpha < 0.01) return;
+
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          if (blurPx > 0.5) ctx.filter = `blur(${Math.min(blurPx, 14)}px)`;
+          ctx.drawImage(p.img, drawX, drawY, drawW, drawH);
+          ctx.filter = 'none';
+
+          // Edge vignette on photo
+          const vgrd = ctx.createLinearGradient(drawX, 0, drawX + drawW, 0);
+          vgrd.addColorStop(0,    'rgba(10,10,11,0.75)');
+          vgrd.addColorStop(0.1,  'rgba(10,10,11,0)');
+          vgrd.addColorStop(0.9,  'rgba(10,10,11,0)');
+          vgrd.addColorStop(1,    'rgba(10,10,11,0.75)');
+          ctx.fillStyle = vgrd; ctx.fillRect(drawX, drawY, drawW, drawH);
+          ctx.restore();
+        });
+
+      // Screen vignette
+      const ev = ctx.createRadialGradient(cx, cy, Math.min(W,H)*0.15, cx, cy, Math.min(W,H)*0.9);
+      ev.addColorStop(0, 'rgba(10,10,11,0)');
+      ev.addColorStop(1, 'rgba(10,10,11,0.8)');
+      ctx.fillStyle = ev; ctx.fillRect(0, 0, W, H);
+
+      progress += speed;
+      speed = Math.min(0.0032, speed + 0.000006);
+      if (progress >= 0.82) speed = Math.max(0.0002, speed * 0.975);
+
+      if (progress >= 1.08) {
+        done = true;
+        let fo = 0;
+        function fadeOut() {
+          fo += 0.02;
+          ctx.fillStyle = `rgba(10,10,11,0.02)`;
+          ctx.fillRect(0, 0, W, H);
+          if (fo < 1) requestAnimationFrame(fadeOut);
+          else showCorridorText();
+        }
+        fadeOut();
+        return;
+      }
+      requestAnimationFrame(render);
+    }
+    render();
+  }
+
+  function showCorridorText() {
+    const cloud = document.getElementById('wordCloud');
+    if (!cloud) return;
+
+    // Words that drift up — varying sizes for dramatic scale contrast
+    const words = [
+      { text: 'One hundred',        size: 'clamp(13px,1.8vw,18px)', weight: 300, delay: 0,    italic: false },
+      { text: 'photographs.',       size: 'clamp(52px,9vw,110px)',  weight: 300, delay: 400,  italic: false },
+      { text: 'One hundred',        size: 'clamp(13px,1.8vw,18px)', weight: 300, delay: 1200, italic: false },
+      { text: 'stories.',           size: 'clamp(40px,7vw,88px)',   weight: 300, delay: 1600, italic: true  },
+      { text: 'chosen carefully.',  size: 'clamp(11px,1.4vw,15px)', weight: 300, delay: 2600, italic: true  },
+      { text: 'The collective',     size: 'clamp(14px,2vw,20px)',   weight: 300, delay: 3400, italic: false },
+      { text: 'has spoken.',        size: 'clamp(44px,8vw,96px)',   weight: 300, delay: 3900, italic: false },
+      { text: 'Something',          size: 'clamp(11px,1.3vw,14px)', weight: 300, delay: 5200, italic: true  },
+      { text: 'has been made.',     size: 'clamp(32px,5.5vw,72px)', weight: 300, delay: 5600, italic: false },
+    ];
+
+    let lastWordTime = 0;
+
+    words.forEach(w => {
+      lastWordTime = Math.max(lastWordTime, w.delay + 3000);
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.style.cssText = `
+          position: absolute;
+          font-family: 'Cormorant Garamond', Georgia, serif;
+          font-size: ${w.size};
+          font-weight: ${w.weight};
+          font-style: ${w.italic ? 'italic' : 'normal'};
+          color: rgba(240,236,229,0);
+          white-space: nowrap;
+          pointer-events: none;
+          text-shadow: 0 0 40px rgba(201,169,110,0.3);
+        `;
+        el.textContent = w.text;
+
+        // Random horizontal position — centered range
+        const W = window.innerWidth;
+        const approxW = w.text.length * parseInt(w.size) * 0.55;
+        const minX = Math.max(20, W * 0.1);
+        const maxX = Math.min(W - approxW - 20, W * 0.85);
+        el.style.left = `${minX + Math.random() * Math.max(0, maxX - minX)}px`;
+        el.style.bottom = `${10 + Math.random() * 25}%`;
+
+        cloud.appendChild(el);
+
+        // Animate: rise and evaporate
+        let frame = 0;
+        let startY = parseFloat(el.style.bottom);
+        const RISE   = 80;  // frames to rise while fading in
+        const HOLD   = 60;  // frames at peak
+        const FADE   = 100; // frames fading out while continuing to rise
+
+        function tick() {
+          frame++;
+          const bottom = startY + (frame / (RISE + HOLD + FADE)) * 35;
+          el.style.bottom = `${bottom}%`;
+
+          let alpha;
+          if      (frame <= RISE)              alpha = frame / RISE;
+          else if (frame <= RISE + HOLD)       alpha = 1;
+          else                                  alpha = Math.max(0, 1 - (frame - RISE - HOLD) / FADE);
+
+          // Large words in gold, small in white
+          const isLarge = parseInt(w.size) > 30 || w.size.includes('7vw') || w.size.includes('8vw') || w.size.includes('9vw');
+          const r = isLarge ? 201 : 240;
+          const g = isLarge ? 169 : 236;
+          const b = isLarge ? 110 : 229;
+          el.style.color = `rgba(${r},${g},${b},${alpha * 0.92})`;
+
+          if (alpha > 0) requestAnimationFrame(tick);
+          else cloud.removeChild(el);
+        }
+        requestAnimationFrame(tick);
+      }, w.delay);
+    });
+
+    // Auto-redirect to /work after all words have risen and user has a moment
+    setTimeout(() => {
+      window.location.href = MILESTONE_URL;
+    }, lastWordTime + 2000);
+  }
+
   function runScatterAnimation(srcs) {
     return new Promise(resolve => {
       const canvas = document.getElementById('scatterCanvas');
@@ -2247,10 +2896,26 @@
 
     if (enterBtn && !DEV) { enterBtn.textContent = 'Begin'; enterBtn.disabled = false; }
 
-    // If milestone already reached, swap Enter button to go to milestone screen
-    if (milestoneReached() && enterBtn) {
-      enterBtn.textContent = 'View the work';
-      enterBtn.onclick = () => showMilestone();
+    // Update live counter now entries are loaded
+    updateLiveCounter();
+
+    // Start question fade in
+    typewriterQuestion();
+
+    // If milestone reached — update UI for complete state
+    if (milestoneReached()) {
+      // Show complete message below question
+      const msg = document.getElementById('completeMessage');
+      if (msg) {
+        msg.style.display = 'flex';
+        setTimeout(() => { msg.style.opacity = '1'; }, 3200);
+      }
+      // Update button text
+      const btnText = document.getElementById('questionEnterText');
+      if (btnText) btnText.textContent = 'Enter the work';
+      // Hide sub copy (replaced by complete message)
+      const sub = document.getElementById('questionSub');
+      if (sub) sub.style.display = 'none';
     }
 
     // Dev panel — build after entries loaded

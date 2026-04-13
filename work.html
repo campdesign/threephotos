@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Instrument+Sans:wght@300;400&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --black:  #0a0a0b;
       --gold:   #c9a96e;
@@ -19,481 +18,985 @@
       --serif:  'Cormorant Garamond', Georgia, serif;
       --sans:   'Instrument Sans', sans-serif;
     }
-
     html, body {
-      height: 100%;
-      background: var(--black);
-      color: var(--white);
-      font-family: var(--sans);
-      font-weight: 300;
-      overflow-x: hidden;
+      height: 100%; background: var(--black);
+      color: var(--white); font-family: var(--sans);
+      font-weight: 300; overflow-x: hidden;
     }
-
-    /* grain */
     body::after {
-      content: '';
-      position: fixed; inset: 0;
+      content: ''; position: fixed; inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
       pointer-events: none; z-index: 9000;
     }
 
-    /* ── Full canvas background ── */
-    #bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
+    /* Loading */
+    #loading-state {
+      position: fixed; inset: 0; z-index: 700;
+      background: var(--black);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 20px;
+      transition: opacity 1.5s ease;
     }
-
-    /* ── Content ── */
-    .page {
-      position: relative;
-      z-index: 10;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 80px 40px 60px;
-      text-align: center;
+    #loading-state.hidden { opacity: 0; pointer-events: none; }
+    .loading-dots { display: flex; gap: 8px; }
+    .loading-dot {
+      width: 3px; height: 3px; background: var(--gold);
+      border-radius: 50%; animation: pulse 1.4s ease infinite;
     }
+    .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+    .loading-text { font-size: 9px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--muted); }
 
-    .eyebrow {
-      font-size: 10px;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 28px;
-      opacity: 0;
-      animation: rise 1.2s ease 0.5s forwards;
+    /* Intro */
+    #intro {
+      position: fixed; inset: 0; z-index: 500;
+      background: var(--black);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 40px;
+      transition: opacity 2.5s ease;
     }
-
-    h1 {
-      font-family: var(--serif);
-      font-size: clamp(28px, 4vw, 56px);
-      font-weight: 300;
-      line-height: 1.1;
-      margin-bottom: 20px;
-      max-width: 680px;
-      text-wrap: balance;
-      opacity: 0;
-      animation: rise 1.2s ease 0.8s forwards;
+    #intro.fade-out { opacity: 0; pointer-events: none; }
+    .intro-eyebrow {
+      font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 36px;
+      opacity: 0; animation: rise 1.2s ease 0.4s forwards;
     }
-
-    .subtitle {
-      font-family: var(--serif);
-      font-size: clamp(15px, 1.8vw, 20px);
-      font-style: italic;
-      color: var(--dim);
-      margin-bottom: 60px;
-      max-width: 480px;
-      line-height: 1.7;
-      text-wrap: pretty;
-      opacity: 0;
-      animation: rise 1.2s ease 1.1s forwards;
+    .intro-title {
+      font-family: var(--serif); font-size: clamp(30px, 5vw, 68px);
+      font-weight: 300; line-height: 1.1;
+      margin-bottom: 20px; max-width: 680px; text-wrap: balance;
+      opacity: 0; animation: rise 1.4s ease 0.7s forwards;
     }
-
-    .rule {
-      width: 1px; height: 60px;
+    .intro-sub {
+      font-family: var(--serif); font-size: clamp(15px, 1.8vw, 20px);
+      font-style: italic; color: var(--dim); margin-bottom: 64px;
+      opacity: 0; animation: rise 1.2s ease 1.1s forwards;
+    }
+    .intro-rule {
+      width: 1px; height: 56px;
       background: linear-gradient(to bottom, var(--gold), transparent);
-      margin: 0 auto 48px;
-      opacity: 0;
-      animation: rise 1.2s ease 1.4s forwards;
+      margin: 0 auto 44px;
+      opacity: 0; animation: rise 1s ease 1.5s forwards;
+    }
+    .intro-reveal-btn {
+      font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--gold); background: none;
+      border: 1px solid rgba(201,169,110,0.35);
+      padding: 15px 48px; cursor: pointer; font-family: var(--sans);
+      transition: all 0.5s;
+      opacity: 0; animation: rise 1s ease 1.9s forwards;
+    }
+    .intro-reveal-btn:hover { background: rgba(201,169,110,0.07); border-color: var(--gold); }
+
+    /* Artwork screen */
+    #artwork-screen {
+      position: fixed; inset: 0; z-index: 100;
+      opacity: 0; transition: opacity 3s ease;
+    }
+    #artwork-screen.revealed { opacity: 1; }
+
+    #swirl-canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
     }
 
-    .description {
-      font-size: 14px;
-      line-height: 1.9;
-      color: var(--dim);
-      max-width: 500px;
-      margin: 0 auto 48px;
-      text-wrap: pretty;
-      opacity: 0;
-      animation: rise 1.2s ease 1.6s forwards;
-    }
-    .description em {
-      font-family: var(--serif);
-      font-style: italic;
-      color: var(--white);
+    /* Vignette */
+    .vignette {
+      position: absolute; inset: 0; z-index: 2; pointer-events: none;
+      background: radial-gradient(ellipse at 50% 50%,
+        transparent 15%,
+        rgba(10,10,11,0.15) 45%,
+        rgba(10,10,11,0.6) 80%,
+        rgba(10,10,11,0.88) 100%
+      );
     }
 
-    /* Stats */
-    .stats {
-      display: flex;
-      gap: 48px;
-      justify-content: center;
-      margin-bottom: 56px;
-      opacity: 0;
-      animation: rise 1.2s ease 1.8s forwards;
-      flex-wrap: wrap;
+    /* Floating narratives */
+    #narrative-overlay {
+      position: absolute; inset: 0; z-index: 3;
+      pointer-events: none; overflow: hidden;
     }
-    .stat { text-align: center; }
-    .stat-num {
-      font-family: var(--serif);
-      font-size: clamp(36px, 5vw, 60px);
-      font-weight: 300;
-      color: var(--gold);
-      line-height: 1;
-      display: block;
-    }
-    .stat-label {
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-top: 6px;
-      display: block;
-    }
-
-    /* Narrative scroll */
-    .narrative-section {
-      width: 100%;
-      max-width: 640px;
-      margin: 0 auto 60px;
-      opacity: 0;
-      animation: rise 1.2s ease 2s forwards;
-    }
-    .narrative-label {
-      font-size: 10px;
-      letter-spacing: 0.24em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 24px;
-    }
-    .narrative-stream {
-      height: 200px;
-      overflow: hidden;
-      position: relative;
-      border-top: 1px solid rgba(201,169,110,0.15);
-      border-bottom: 1px solid rgba(201,169,110,0.15);
-    }
-    /* Fade edges */
-    .narrative-stream::before,
-    .narrative-stream::after {
-      content: '';
+    .fn {
       position: absolute;
-      left: 0; right: 0;
-      height: 60px;
-      z-index: 2;
-      pointer-events: none;
+      font-family: var(--sans); font-weight: 300;
+      font-size: 10px; letter-spacing: 0.05em; line-height: 1.8;
+      color: rgba(240,236,229,0); text-align: center;
+      max-width: min(260px, 50vw); pointer-events: none;
     }
-    .narrative-stream::before {
-      top: 0;
-      background: linear-gradient(to bottom, var(--black), transparent);
-    }
-    .narrative-stream::after {
-      bottom: 0;
-      background: linear-gradient(to top, var(--black), transparent);
+    .fn-author {
+      display: block; font-size: 8px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: rgba(201,169,110,0); margin-top: 5px;
     }
 
-    .narrative-inner {
-      padding: 20px 0;
+    /* Bottom overlay */
+    .artwork-overlay {
+      position: absolute; inset: 0; z-index: 4;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      padding: 48px 40px; text-align: center;
+      opacity: 0; transition: opacity 2s ease; pointer-events: none;
     }
+    .artwork-overlay.show { opacity: 1; pointer-events: all; }
+    .artwork-title {
+      font-family: var(--serif); font-size: clamp(17px, 2.2vw, 30px);
+      font-weight: 300; color: rgba(240,236,229,0.8);
+      margin-bottom: 8px; text-shadow: 0 2px 24px rgba(0,0,0,0.95);
+    }
+    .artwork-meta {
+      font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(201,169,110,0.55); margin-bottom: 28px;
+    }
+    .artwork-scroll-hint {
+      font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(240,236,229,0.2); cursor: pointer;
+      transition: color 0.3s; background: none; border: none;
+      font-family: var(--sans); pointer-events: all;
+    }
+    .artwork-scroll-hint:hover { color: rgba(240,236,229,0.55); }
 
-    .narrative-item {
-      font-family: var(--serif);
-      font-size: clamp(14px, 1.8vw, 18px);
-      font-style: italic;
-      line-height: 1.8;
-      color: var(--dim);
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      transition: color 0.6s;
+    /* Detail */
+    #detail {
+      position: relative; z-index: 10; margin-top: 100vh;
+      background: var(--black); padding: 100px 40px 80px;
+      display: flex; flex-direction: column;
+      align-items: center; text-align: center;
     }
-    .narrative-item.highlight { color: var(--white); }
-    .narrative-item .attrib {
-      font-family: var(--sans);
-      font-style: normal;
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-left: 12px;
-    }
-
-    .back-link {
-      display: inline-block;
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      text-decoration: none;
-      border-bottom: 1px solid var(--muted);
-      padding-bottom: 2px;
-      transition: color 0.3s, border-color 0.3s;
-      opacity: 0;
-      animation: rise 1.2s ease 2.2s forwards;
-    }
+    .detail-eyebrow { font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 32px; }
+    .detail-body { font-family: var(--serif); font-size: clamp(17px, 2.2vw, 24px); font-weight: 300; line-height: 1.9; color: var(--dim); max-width: 560px; margin-bottom: 64px; text-wrap: pretty; }
+    .detail-body em { font-style: italic; color: var(--white); }
+    .stats { display: flex; gap: 60px; justify-content: center; margin-bottom: 80px; flex-wrap: wrap; }
+    .stat-num { font-family: var(--serif); font-size: clamp(44px, 6vw, 72px); font-weight: 300; color: var(--gold); line-height: 1; display: block; }
+    .stat-label { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-top: 8px; display: block; }
+    .narrative-section { width: 100%; max-width: 600px; margin-bottom: 80px; }
+    .narrative-label { font-size: 9px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); margin-bottom: 24px; }
+    .narrative-stream { height: 200px; overflow: hidden; position: relative; border-top: 1px solid rgba(201,169,110,0.1); border-bottom: 1px solid rgba(201,169,110,0.1); }
+    .narrative-stream::before, .narrative-stream::after { content: ''; position: absolute; left: 0; right: 0; height: 50px; z-index: 2; pointer-events: none; }
+    .narrative-stream::before { top: 0; background: linear-gradient(to bottom, var(--black), transparent); }
+    .narrative-stream::after  { bottom: 0; background: linear-gradient(to top, var(--black), transparent); }
+    .narrative-inner { padding: 16px 0; }
+    .narrative-item { font-family: var(--serif); font-size: clamp(13px, 1.6vw, 17px); font-style: italic; line-height: 1.8; color: var(--dim); padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.03); transition: color 0.8s; }
+    .narrative-item.highlight { color: rgba(240,236,229,0.75); }
+    .narrative-item .attrib { font-family: var(--sans); font-style: normal; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-left: 10px; }
+    .back-link { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--muted); padding-bottom: 2px; transition: color 0.3s, border-color 0.3s; margin-bottom: 48px; }
     .back-link:hover { color: var(--gold); border-color: var(--gold); }
+    .credit { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); line-height: 2; }
 
-    .credit {
-      margin-top: 48px;
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      line-height: 1.8;
-      opacity: 0;
-      animation: rise 1.2s ease 2.4s forwards;
+    /* ── PHOTO GRID ── */
+    #photoGrid {
+      position: fixed; inset: 0; z-index: 200;
+      background: var(--black);
+      display: flex; flex-direction: column;
+      animation: fadeIn 0.6s ease;
+    }
+    .grid-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 32px; border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .grid-eyebrow {
+      font-size: 9px; letter-spacing: 0.26em;
+      text-transform: uppercase; color: var(--gold);
+    }
+    .grid-close {
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 16px;
+      transition: color 0.2s; padding: 4px;
+    }
+    .grid-close:hover { color: var(--white); }
+    .grid-body {
+      flex: 1; overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 2px; padding: 2px;
+    }
+    .grid-item {
+      position: relative; cursor: pointer;
+      aspect-ratio: 1; overflow: hidden;
+      background: var(--card);
+    }
+    .grid-item img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.4s ease, filter 0.4s ease;
+      filter: brightness(0.75) saturate(0.8);
+    }
+    .grid-item:hover img { transform: scale(1.04); filter: brightness(0.95) saturate(1); }
+    .grid-item-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(10,10,11,0.85) 0%, transparent 50%);
+      opacity: 0; transition: opacity 0.3s;
+      display: flex; align-items: flex-end; padding: 12px;
+    }
+    .grid-item:hover .grid-item-overlay { opacity: 1; }
+    .grid-item-text {
+      font-family: var(--serif); font-style: italic;
+      font-size: 11px; color: var(--white); line-height: 1.4;
+      display: -webkit-box; -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical; overflow: hidden;
     }
 
-    /* Loading state */
-    .loading {
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 24px;
+    /* Grid lightbox */
+    .grid-lightbox {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(10,10,11,0.96);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px; animation: fadeIn 0.3s ease;
+    }
+    .grid-lb-inner {
+      position: relative; max-width: min(800px, 92vw);
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .grid-lb-close {
+      position: absolute; top: -40px; right: 0;
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 18px; transition: color 0.2s;
+    }
+    .grid-lb-close:hover { color: var(--white); }
+    .grid-lb-inner img {
+      width: 100%; height: auto; max-height: 70vh;
+      object-fit: contain; display: block;
+    }
+    .grid-lb-meta { text-align: center; }
+    .grid-lb-narrative {
+      font-family: var(--serif); font-style: italic;
+      font-size: clamp(15px, 2vw, 20px); color: var(--white);
+      line-height: 1.7; margin-bottom: 10px; text-wrap: pretty;
+    }
+    .grid-lb-attrib {
+      font-size: 9px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted);
     }
 
-    @keyframes rise {
-      from { opacity:0; transform:translateY(12px); }
-      to   { opacity:1; transform:translateY(0); }
-    }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 
-    @media (max-width: 600px) {
-      .page { padding: 60px 24px 48px; }
-      .stats { gap: 32px; }
-    }
+    @keyframes rise { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes pulse { 0%,80%,100% { opacity:0.2; transform:scale(0.8); } 40% { opacity:1; transform:scale(1.2); } }
+    @media(max-width:600px) { #detail { padding: 72px 24px 56px; } .stats { gap: 28px; } }
   </style>
 </head>
 <body>
 
-<!-- Living background canvas -->
-<canvas id="bg"></canvas>
+<div id="loading-state">
+  <div class="loading-dots"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>
+  <p class="loading-text">Loading the collective</p>
+</div>
 
-<div class="page">
+<div id="intro">
+  <p class="intro-eyebrow">Three Photos — The Collective Work</p>
+  <h1 class="intro-title">One hundred photographs.<br>One hundred stories.</h1>
+  <p class="intro-sub">Made from everything the collective gave.</p>
+  <div class="intro-rule"></div>
+  <button class="intro-reveal-btn" onclick="revealArtwork()">Reveal the work</button>
+</div>
 
-  <p class="eyebrow" id="eyebrow">Three Photos — The Collective Work</p>
-
-  <h1>One hundred photographs.<br>One hundred stories.</h1>
-
-  <p class="subtitle">Made from everything the collective gave.</p>
-
-  <div class="rule"></div>
-
-  <p class="description">
-    Every photograph here was chosen deliberately. Every narrative was recorded in the dark, or written slowly, about a moment someone never wanted to forget. <em>This is what they left behind.</em>
-  </p>
-
-  <div class="stats">
-    <div class="stat">
-      <span class="stat-num" id="statEntries">—</span>
-      <span class="stat-label">Stories</span>
-    </div>
-    <div class="stat">
-      <span class="stat-num" id="statPhotos">—</span>
-      <span class="stat-label">Photographs</span>
-    </div>
-    <div class="stat">
-      <span class="stat-num" id="statNarratives">—</span>
-      <span class="stat-label">Memories recorded</span>
-    </div>
+<div id="artwork-screen">
+  <canvas id="swirl-canvas"></canvas>
+  <div class="vignette"></div>
+  <div id="narrative-overlay"></div>
+  <div class="artwork-overlay" id="artworkOverlay">
+    <p class="artwork-title">The collective has spoken.</p>
+    <p class="artwork-meta" id="artworkMeta">100 photographs &nbsp;·&nbsp; 100 stories</p>
+    <button class="artwork-scroll-hint" onclick="openPhotoGrid()">Read the memories &darr;</button>
   </div>
+</div>
 
-  <div class="narrative-section">
-    <p class="narrative-label">From the collective</p>
-    <div class="narrative-stream" id="narrativeStream">
-      <div class="narrative-inner" id="narrativeInner">
-        <p class="loading">Loading memories&hellip;</p>
+<!-- Photo grid overlay -->
+<div id="photoGrid" style="display:none;">
+  <div class="grid-header">
+    <p class="grid-eyebrow">The Collective — <span id="gridCount">—</span> photographs</p>
+    <button class="grid-close" onclick="closePhotoGrid()">&#10005;</button>
+  </div>
+  <div class="grid-body" id="gridBody"></div>
+  <div class="grid-lightbox" id="gridLightbox" style="display:none;" onclick="closeGridLightbox()">
+    <div class="grid-lb-inner" onclick="event.stopPropagation()">
+      <button class="grid-lb-close" onclick="closeGridLightbox()">&#10005;</button>
+      <img id="gridLbImg" src="" alt="" />
+      <div class="grid-lb-meta">
+        <p class="grid-lb-narrative" id="gridLbNarrative"></p>
+        <p class="grid-lb-attrib" id="gridLbAttrib"></p>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Artwork slot — auto-populated when generated, or replace manually -->
-  <div id="artworkSlot" style="width:min(800px,92vw);margin:0 auto 48px;"></div>
-
+<div id="detail">
+  <p class="detail-eyebrow">From the collective</p>
+  <p class="detail-body">Every photograph here was chosen deliberately. Every narrative recorded in the dark, or written slowly, about a moment someone never wanted to forget. <em>This is what they left behind.</em></p>
+  <div class="stats">
+    <div class="stat"><span class="stat-num" id="statEntries">—</span><span class="stat-label">Stories</span></div>
+    <div class="stat"><span class="stat-num" id="statPhotos">—</span><span class="stat-label">Photographs</span></div>
+    <div class="stat"><span class="stat-num" id="statNarratives">—</span><span class="stat-label">Memories recorded</span></div>
+  </div>
+  <div class="narrative-section">
+    <p class="narrative-label">What they gave</p>
+    <div class="narrative-stream" id="narrativeStream">
+      <div class="narrative-inner" id="narrativeInner"><p style="color:var(--muted);font-size:10px;font-style:italic;padding:20px 0;">Loading&hellip;</p></div>
+    </div>
+  </div>
   <a class="back-link" href="/">Return to Three Photos</a>
-
-  <p class="credit">
-    Three Photos &nbsp;·&nbsp; A Memory Archive<br>
-    100 Photographs &nbsp;·&nbsp; 100 Stories
-  </p>
-
+  <p class="credit">Three Photos &nbsp;·&nbsp; A Memory Archive<br>100 Photographs &nbsp;·&nbsp; 100 Stories</p>
 </div>
 
 <script>
   const SB_URL = 'https://fzeosiuwbhjnfzrobhkq.supabase.co';
   const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6ZW9zaXV3YmhqbmZ6cm9iaGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4NDQ4MTYsImV4cCI6MjA5MTQyMDgxNn0.fi5UC3ccIPEfVsv3E9lz_00JdHinYJaDZX0wOqSmQp4';
 
-  // ── BACKGROUND CANVAS — undulating waves seeded by narrative data
-  const canvas = document.getElementById('bg');
+  const canvas = document.getElementById('swirl-canvas');
   const ctx    = canvas.getContext('2d');
   let W, H, t = 0;
-  let waveSeeds = [2.1, 3.3, 1.7, 4.1, 2.7]; // default, updated from data
+  let running  = false;
+  let imgs     = [];
+  let palette  = [];
+  let allNarratives = [];
 
-  function resize() {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
+  // ── RESIZE
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', () => { resize(); if (running) redrawBase(); });
+
+  // ── BLOB SYSTEM
+  // Each blob is a large, soft, organic form carrying color from the photos
+  // They move slowly, overlap, and blend — ink in water
+  const BLOB_COUNT = 18;
+  let blobs = [];
+
+  function initBlobs() {
+    blobs = Array.from({ length: BLOB_COUNT }, (_, i) => {
+      const col = palette[i % palette.length] || { r: 201, g: 169, b: 110 };
+      return {
+        x: Math.random() * W,
+        y: Math.random() * H,
+        // Velocity — very slow
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: (Math.random() - 0.5) * 0.25,
+        // Size — large, soft
+        r: Math.min(W, H) * (0.18 + Math.random() * 0.28),
+        // Color from palette
+        r_: col.r, g_: col.g, b_: col.b,
+        // Independent time offset for pulsing
+        phase: Math.random() * Math.PI * 2,
+        phaseSpeed: 0.002 + Math.random() * 0.003,
+        // Wander — slow drift direction changes
+        wanderAngle: Math.random() * Math.PI * 2,
+        wanderSpeed: 0.002 + Math.random() * 0.002,
+        // Optional: carries a photo fragment
+        imgIdx: imgs.length > 0 && Math.random() < 0.4 ? Math.floor(Math.random() * imgs.length) : -1,
+      };
+    });
   }
-  resize();
-  window.addEventListener('resize', resize);
 
-  function drawBg() {
-    ctx.clearRect(0, 0, W, H);
+  function updateBlobs() {
+    blobs.forEach(b => {
+      // More chaotic wander — bigger random turns, occasional surges
+      b.wanderAngle += (Math.random() - 0.5) * 0.12;
+      // Occasional random impulse
+      if (Math.random() < 0.006) {
+        b.vx += (Math.random() - 0.5) * 0.8;
+        b.vy += (Math.random() - 0.5) * 0.8;
+      }
+      b.vx += Math.cos(b.wanderAngle) * 0.018;
+      b.vy += Math.sin(b.wanderAngle) * 0.018;
+
+      // Varying speed cap per blob
+      const speedCap = 0.5 + Math.sin(b.phase * 0.3) * 0.3;
+      const speed = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
+      if (speed > speedCap) { b.vx *= speedCap / speed; b.vy *= speedCap / speed; }
+
+      // Weaker center pull — blobs roam more freely
+      b.vx += (W / 2 - b.x) * 0.00002;
+      b.vy += (H / 2 - b.y) * 0.00002;
+
+      b.x += b.vx;
+      b.y += b.vy;
+
+      // Soft bounce
+      if (b.x < -b.r * 0.5) b.vx += 0.08;
+      if (b.x > W + b.r * 0.5) b.vx -= 0.08;
+      if (b.y < -b.r * 0.5) b.vy += 0.08;
+      if (b.y > H + b.r * 0.5) b.vy -= 0.08;
+
+      b.phase += b.phaseSpeed;
+
+      // Color slowly shifts toward a new palette color over time
+      if (!b.targetColor || Math.random() < 0.002) {
+        b.targetColor = palette[Math.floor(Math.random() * palette.length)];
+      }
+      if (b.targetColor) {
+        b.r_ += (b.targetColor.r - b.r_) * 0.003;
+        b.g_ += (b.targetColor.g - b.g_) * 0.003;
+        b.b_ += (b.targetColor.b - b.b_) * 0.003;
+      }
+    });
+  }
+
+  function drawBlobs() {
+    blobs.forEach(b => {
+      // Pulsing radius
+      const radius = b.r * (1 + Math.sin(b.phase) * 0.08);
+      // Pulsing alpha — blobs breathe
+      const alpha = 0.04 + Math.sin(b.phase * 0.7) * 0.025;
+
+      // If this blob carries a photo, draw it clipped to the blob shape
+      if (b.imgIdx >= 0 && imgs[b.imgIdx]) {
+        ctx.save();
+        ctx.globalAlpha = alpha * 1.8;
+        ctx.globalCompositeOperation = 'screen';
+        // Create circular clip
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, radius, 0, Math.PI * 2);
+        ctx.clip();
+        // Draw photo
+        const img = imgs[b.imgIdx];
+        const aspect = img.naturalWidth / img.naturalHeight;
+        const drawH = radius * 2;
+        const drawW = drawH * aspect;
+        ctx.filter = 'blur(8px) saturate(1.4)';
+        ctx.drawImage(img, b.x - drawW / 2, b.y - drawH / 2, drawW, drawH);
+        ctx.filter = 'none';
+        ctx.restore();
+      }
+
+      // Draw the soft color blob on top
+      const grd = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, radius);
+      grd.addColorStop(0,   `rgba(${b.r_},${b.g_},${b.b_},${alpha * 2.5})`);
+      grd.addColorStop(0.4, `rgba(${b.r_},${b.g_},${b.b_},${alpha * 1.2})`);
+      grd.addColorStop(0.75,`rgba(${b.r_},${b.g_},${b.b_},${alpha * 0.3})`);
+      grd.addColorStop(1,   `rgba(${b.r_},${b.g_},${b.b_},0)`);
+
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      ctx.fillStyle = grd;
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+  }
+
+  // ── PHOTO FRAGMENT LAYER
+  // Slow large photo fragments drifting across the screen, heavily blurred
+  const FRAGMENT_COUNT = 8;
+  let fragments = [];
+
+  function initFragments() {
+    fragments = Array.from({ length: FRAGMENT_COUNT }, (_, i) => ({
+      imgIdx: imgs.length > 0 ? i % imgs.length : -1,
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: (Math.random() - 0.5) * 0.15,
+      size: Math.min(W, H) * (0.35 + Math.random() * 0.4),
+      alpha: 0.01 + Math.random() * 0.04,
+      rotation: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.0003,
+      phase: Math.random() * Math.PI * 2,
+      phaseSpeed: 0.001 + Math.random() * 0.002,
+    }));
+  }
+
+  function drawFragments() {
+    if (!imgs.length) return;
+    fragments.forEach(f => {
+      if (f.imgIdx < 0 || !imgs[f.imgIdx]) return;
+
+      f.x += f.vx; f.y += f.vy; f.rotation += f.rotSpeed; f.phase += f.phaseSpeed;
+
+      // Gentle center pull
+      f.vx += (W / 2 - f.x) * 0.00002;
+      f.vy += (H / 2 - f.y) * 0.00002;
+
+      const alpha = f.alpha * (0.7 + Math.sin(f.phase) * 0.3);
+      const img   = imgs[f.imgIdx];
+      const size  = f.size * (1 + Math.sin(f.phase * 0.5) * 0.05);
+
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.globalCompositeOperation = 'screen';
+      ctx.filter = 'blur(20px) saturate(1.2)';
+      ctx.translate(f.x, f.y);
+      ctx.rotate(f.rotation);
+      ctx.drawImage(img, -size / 2, -size / 2, size, size);
+      ctx.filter = 'none';
+      ctx.restore();
+    });
+  }
+
+  // ── RENDER LOOP
+  let lastFrame = 0;
+  function render(ts) {
+    if (!running) return;
+    const dt = ts - lastFrame;
+    lastFrame = ts;
+    t += 0.001;
+
+    // Very gentle dark wash — slow trail accumulation creates depth
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = 'rgba(10,10,11,0.018)';
+    ctx.fillRect(0, 0, W, H);
+
+    drawFragments();
+    updateBlobs();
+    drawBlobs();
+
+    requestAnimationFrame(render);
+  }
+
+  function redrawBase() {
     ctx.fillStyle = '#0a0a0b';
     ctx.fillRect(0, 0, W, H);
-
-    const waves = [
-      { freq: waveSeeds[0], amp: 0.10, phase: 0,   alpha: 0.07, lw: 1.2, color: '#c9a96e' },
-      { freq: waveSeeds[1], amp: 0.07, phase: 1.3, alpha: 0.04, lw: 0.8, color: '#8b6a3a' },
-      { freq: waveSeeds[2], amp: 0.13, phase: 2.6, alpha: 0.05, lw: 1.5, color: '#c9a96e' },
-      { freq: waveSeeds[3], amp: 0.05, phase: 0.9, alpha: 0.03, lw: 0.6, color: '#e8d0a0' },
-      { freq: waveSeeds[4], amp: 0.09, phase: 3.2, alpha: 0.04, lw: 1.0, color: '#7a5a2a' },
-      { freq: waveSeeds[0]*1.3, amp: 0.04, phase: 1.8, alpha: 0.025, lw: 0.5, color: '#c9a96e' },
-    ];
-
-    waves.forEach(w => {
-      ctx.beginPath();
-      for (let x = 0; x <= W; x += 3) {
-        const y = H * 0.5
-          + Math.sin(x / W * Math.PI * w.freq + t + w.phase) * H * w.amp
-          + Math.sin(x / W * Math.PI * w.freq * 0.6 + t * 0.8 + w.phase * 1.3) * H * w.amp * 0.4
-          + Math.cos(x / W * Math.PI * w.freq * 0.3 + t * 1.2 + w.phase * 0.7) * H * w.amp * 0.2;
-        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      }
-      ctx.strokeStyle = w.color;
-      ctx.globalAlpha = w.alpha;
-      ctx.lineWidth   = w.lw;
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-    });
-
-    // Radial glow from center
-    const grd = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W,H)*0.6);
-    grd.addColorStop(0,   'rgba(201,169,110,0.05)');
-    grd.addColorStop(0.6, 'rgba(201,169,110,0.01)');
-    grd.addColorStop(1,   'rgba(0,0,0,0)');
-    ctx.fillStyle = grd;
-    ctx.fillRect(0, 0, W, H);
-
-    t += 0.006;
-    requestAnimationFrame(drawBg);
   }
-  drawBg();
 
-  // ── LOAD DATA FROM SUPABASE
+  // ── SAMPLE COLORS FROM PHOTOS
+  function sampleColors(imgList) {
+    const colors = [];
+    const oc = document.createElement('canvas');
+    oc.width = oc.height = 32;
+    const ot = oc.getContext('2d');
+    imgList.forEach(img => {
+      try {
+        ot.drawImage(img, 0, 0, 32, 32);
+        const data = ot.getImageData(0, 0, 32, 32).data;
+        for (let s = 0; s < 20; s++) {
+          const px = Math.floor(Math.random() * 1024) * 4;
+          const r = data[px], g = data[px+1], b = data[px+2];
+          // Only vivid colors — high saturation, decent brightness
+          const max = Math.max(r,g,b), min = Math.min(r,g,b);
+          const sat = max === 0 ? 0 : (max - min) / max;
+          const bright = (r + g + b) / 3;
+          // Boost saturation — multiply away from grey
+          if (sat > 0.25 && bright > 25 && bright < 230) {
+            // Boost towards vivid
+            const boost = 1.4;
+            const mid = 128;
+            colors.push({
+              r: Math.min(255, Math.round(mid + (r - mid) * boost)),
+              g: Math.min(255, Math.round(mid + (g - mid) * boost)),
+              b: Math.min(255, Math.round(mid + (b - mid) * boost)),
+            });
+          }
+        }
+      } catch(e) {}
+    });
+    if (!colors.length) return [
+      { r: 220, g: 140, b: 60 },
+      { r: 60,  g: 140, b: 220 },
+      { r: 180, g: 60,  b: 100 },
+      { r: 60,  g: 200, b: 140 },
+    ];
+    return colors;
+  }
+
+  // ── LOAD DATA
   async function loadData() {
     try {
-      // Load artwork URL if generated
-      const artRes = await fetch(`${SB_URL}/rest/v1/settings?key=eq.artwork_url&select=value`, {
+      const res = await fetch(`${SB_URL}/rest/v1/entries?select=*&order=created_at.desc`, {
         headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
       });
-      const artData = await artRes.json();
-      if (artData && artData[0] && artData[0].value) {
-        const artworkUrl = artData[0].value;
-        const artEl = document.getElementById('artworkSlot');
-        if (artEl) {
-          // Determine if video or image
-          const isVideo = artworkUrl.match(/\.(mp4|webm|mov)/i);
-          artEl.innerHTML = isVideo
-            ? `<video autoplay loop muted playsinline style="width:100%;display:block;"><source src="${artworkUrl}" /></video>`
-            : `<img src="${artworkUrl}" alt="The Work" style="width:100%;display:block;filter:brightness(0.92);" />`;
-        }
-      }
-
-      const res = await fetch(`${SB_URL}/rest/v1/entries?select=*&order=created_at.desc`, {
-        headers: {
-          'apikey': SB_KEY,
-          'Authorization': `Bearer ${SB_KEY}`
-        }
-      });
-      if (!res.ok) throw new Error('Failed to load');
       const entries = await res.json();
 
-      // Stats
-      const totalPhotos     = entries.reduce((s, e) => s + e.photos.length, 0);
-      const totalNarratives = entries.reduce((s, e) =>
-        s + e.photos.filter(p => p.narrative && p.narrative.trim()).length, 0
-      );
+      if (Array.isArray(entries) && entries.length > 0) {
+        const totalPhotos = entries.reduce((s,e) => s+e.photos.length, 0);
+        const totalNarr   = entries.reduce((s,e) => s+e.photos.filter(p=>p.narrative&&p.narrative.trim()).length, 0);
+        document.getElementById('statEntries').textContent    = entries.length;
+        document.getElementById('statPhotos').textContent     = totalPhotos;
+        document.getElementById('statNarratives').textContent = totalNarr;
+        document.getElementById('artworkMeta').textContent    = `${totalPhotos} photographs\u00a0\u00b7\u00a0${entries.length} stories`;
 
-      document.getElementById('statEntries').textContent     = entries.length;
-      document.getElementById('statPhotos').textContent      = totalPhotos;
-      document.getElementById('statNarratives').textContent  = totalNarratives;
-
-      // Collect all narratives
-      const narratives = [];
-      entries.forEach(entry => {
-        entry.photos.forEach(photo => {
-          if (photo.narrative && photo.narrative.trim()) {
-            narratives.push({ text: photo.narrative.trim(), author: entry.author || 'Anonymous' });
+        const photoUrls = [];
+        const audioUrls = [];
+        entries.forEach(e => e.photos.forEach(p => {
+          if (p.src && p.src.startsWith('http')) {
+            photoUrls.push(p.src);
+            allPhotos.push({ src: p.src, narrative: p.narrative || '', author: e.author || 'Anonymous', title: e.title || '' });
           }
-        });
-      });
+          if (p.narrative && p.narrative.trim()) allNarratives.push({ text: p.narrative.trim(), author: e.author || 'Anonymous' });
+          if (p.audio && p.audio.startsWith('data:audio')) audioUrls.push(p.audio);
+        }));
+        // Store audio for echoes — triggered when sound starts
+        if (audioUrls.length) window._audioMemories = audioUrls.slice(0, 20);
 
-      // Seed wave frequencies from narrative character counts — unique to this collective
-      if (narratives.length > 4) {
-        waveSeeds = narratives.slice(0, 5).map((n, i) =>
-          1.5 + ((n.text.length * (i + 1)) % 31) / 10
-        );
+        // Load a spread of photos
+        const step = Math.max(1, Math.floor(photoUrls.length / 20));
+        const selected = photoUrls.filter((_, i) => i % step === 0).slice(0, 20);
+        imgs = await loadImages(selected);
+        palette = sampleColors(imgs);
+        palette.sort(() => Math.random() - 0.5);
+      } else {
+        palette = [{r:201,g:169,b:110},{r:80,g:100,b:140},{r:140,g:80,b:60}];
       }
-
-      // Build narrative stream
-      renderNarratives(narratives);
-
     } catch(e) {
-      console.error('Failed to load data:', e);
-      document.getElementById('narrativeInner').innerHTML =
-        '<p class="loading">Could not load narratives.</p>';
+      console.error(e);
+      palette = [{r:201,g:169,b:110},{r:80,g:100,b:140},{r:140,g:80,b:60}];
+    } finally {
+      document.getElementById('loading-state').classList.add('hidden');
     }
+    if (allNarratives.length) renderNarrativeStream(allNarratives);
   }
 
-  // ── NARRATIVE STREAM — slow auto-scroll with highlight
-  function renderNarratives(narratives) {
-    if (!narratives.length) {
-      document.getElementById('narrativeInner').innerHTML =
-        '<p class="loading">No narratives recorded yet.</p>';
-      return;
-    }
-
-    // Shuffle and repeat for continuous scroll
-    const shuffled = [...narratives].sort(() => Math.random() - 0.5);
-    const doubled  = [...shuffled, ...shuffled]; // repeat for seamless loop feel
-
-    const inner = document.getElementById('narrativeInner');
-    inner.innerHTML = doubled.map((n, i) => `
-      <p class="narrative-item" data-idx="${i}">
-        &ldquo;${n.text}&rdquo;
-        <span class="attrib">${n.author}</span>
-      </p>
-    `).join('');
-
-    // Slow scroll
-    const stream = document.getElementById('narrativeStream');
-    let scrollPos = 0;
-    let highlighted = 0;
-
-    function scrollStep() {
-      scrollPos += 0.4;
-      stream.scrollTop = scrollPos;
-
-      // Loop back
-      if (scrollPos >= inner.scrollHeight / 2) {
-        scrollPos = 0;
-        stream.scrollTop = 0;
-      }
-
-      // Highlight the middle item
-      const items = inner.querySelectorAll('.narrative-item');
-      const midY  = stream.scrollTop + stream.clientHeight / 2;
-      let closest = 0, closestDist = Infinity;
-      items.forEach((item, i) => {
-        const dist = Math.abs(item.offsetTop - midY);
-        if (dist < closestDist) { closestDist = dist; closest = i; }
+  function loadImages(urls) {
+    return new Promise(resolve => {
+      if (!urls.length) { resolve([]); return; }
+      const result = []; let done = 0;
+      urls.forEach(url => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => { if (img.naturalWidth > 0) result.push(img); done++; if (done === urls.length) resolve(result); };
+        img.onerror = () => { done++; if (done === urls.length) resolve(result); };
+        img.src = url;
       });
+    });
+  }
 
-      if (closest !== highlighted) {
-        items[highlighted]?.classList.remove('highlight');
-        items[closest]?.classList.add('highlight');
-        highlighted = closest;
+  // ── REVEAL
+  function revealArtwork() {
+    startAmbientSound();
+    document.getElementById('intro').classList.add('fade-out');
+    setTimeout(() => {
+      document.getElementById('intro').style.display = 'none';
+      document.getElementById('artwork-screen').classList.add('revealed');
+      redrawBase();
+      initBlobs();
+      initFragments();
+      running = true;
+      requestAnimationFrame(render);
+      setTimeout(() => {
+        document.getElementById('artworkOverlay').classList.add('show');
+        if (allNarratives.length) startFloatingNarratives(allNarratives);
+        startGlimpses();
+      }, 4000);
+    }, 2200);
+  }
+
+  // ── FLOATING NARRATIVES — 10s total, fully gone
+  function startFloatingNarratives(narratives) {
+    const overlay = document.getElementById('narrative-overlay');
+    if (!overlay) return;
+    const pool = [...narratives].sort(() => Math.random() - 0.5);
+    let idx = 0;
+
+    function showNext() {
+      const n   = pool[idx++ % pool.length];
+      const el  = document.createElement('div');
+      el.className = 'fn';
+      el.style.left      = `${8 + Math.random() * 62}%`;
+      el.style.top       = `${8 + Math.random() * 58}%`;
+      el.style.transform = 'translate(-50%,-50%)';
+      el.innerHTML = `${n.text}<span class="fn-author">${n.author}</span>`;
+      overlay.appendChild(el);
+
+      const auth = el.querySelector('.fn-author');
+      let frame  = 0;
+      const FI = 60, HOLD = 420, FO = 120; // ~10s total at 60fps
+
+      function tick() {
+        frame++;
+        const a = frame <= FI        ? frame / FI
+                : frame <= FI + HOLD ? 1
+                : Math.max(0, 1 - (frame - FI - HOLD) / FO);
+        el.style.color   = `rgba(240,236,229,${a * 0.65})`;
+        auth.style.color = `rgba(201,169,110,${a * 0.45})`;
+        if (a > 0) requestAnimationFrame(tick);
+        else { try { overlay.removeChild(el); } catch(e){} }
       }
-
-      requestAnimationFrame(scrollStep);
+      requestAnimationFrame(tick);
+      setTimeout(showNext, 6000 + Math.random() * 3000);
     }
 
-    requestAnimationFrame(scrollStep);
+    showNext();
+    setTimeout(showNext, 4000);
+    setTimeout(showNext, 8000);
+  }
+
+  // ── NARRATIVE STREAM
+  function renderNarrativeStream(narratives) {
+    const doubled = [...narratives, ...narratives].sort(() => Math.random() - 0.5);
+    const inner   = document.getElementById('narrativeInner');
+    inner.innerHTML = doubled.map((n,i) =>
+      `<p class="narrative-item">&ldquo;${n.text}&rdquo;<span class="attrib">${n.author}</span></p>`
+    ).join('');
+    const stream = document.getElementById('narrativeStream');
+    let pos = 0, hi = 0;
+    function scroll() {
+      pos += 0.35; stream.scrollTop = pos;
+      if (pos >= inner.scrollHeight / 2) { pos = 0; stream.scrollTop = 0; }
+      const items = inner.querySelectorAll('.narrative-item');
+      const mid   = stream.scrollTop + stream.clientHeight / 2;
+      let cl = 0, cd = Infinity;
+      items.forEach((item, i) => { const d = Math.abs(item.offsetTop - mid); if (d < cd) { cd = d; cl = i; } });
+      if (cl !== hi) { items[hi]?.classList.remove('highlight'); items[cl]?.classList.add('highlight'); hi = cl; }
+      requestAnimationFrame(scroll);
+    }
+    requestAnimationFrame(scroll);
+  }
+
+  // ── PHOTO GRID
+  let allPhotos = []; // flat list of {src, narrative, author, title}
+
+  function openPhotoGrid() {
+    const grid = document.getElementById('photoGrid');
+    if (!grid) return;
+    grid.style.display = 'flex';
+    if (!allPhotos.length) buildGrid();
+  }
+
+  function closePhotoGrid() {
+    const grid = document.getElementById('photoGrid');
+    if (grid) grid.style.display = 'none';
+  }
+
+  function buildGrid() {
+    const body = document.getElementById('gridBody');
+    const countEl = document.getElementById('gridCount');
+    if (!body) return;
+
+    if (countEl) countEl.textContent = allPhotos.length;
+
+    body.innerHTML = allPhotos.map((p, i) => `
+      <div class="grid-item" onclick="openGridLightbox(${i})">
+        <img src="${p.src}" alt="" loading="lazy" />
+        <div class="grid-item-overlay">
+          <p class="grid-item-text">${p.narrative ? '"' + p.narrative + '"' : ''}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function openGridLightbox(idx) {
+    const p  = allPhotos[idx];
+    if (!p) return;
+    document.getElementById('gridLbImg').src         = p.src;
+    document.getElementById('gridLbNarrative').textContent = p.narrative ? '"' + p.narrative + '"' : '';
+    document.getElementById('gridLbAttrib').textContent    = [p.author, p.title].filter(Boolean).join(' — ');
+    document.getElementById('gridLightbox').style.display  = 'flex';
+  }
+
+  function closeGridLightbox() {
+    document.getElementById('gridLightbox').style.display = 'none';
   }
 
   loadData();
+
+  // ── PHOTO GLIMPSE SYSTEM
+  let glimpseActive = false;
+
+  function startGlimpses() {
+    // Start 2 independent glimpse streams
+    scheduleNextGlimpse('a');
+    setTimeout(() => scheduleNextGlimpse('b'), 4000);
+  }
+
+  const glimpseStreams = {};
+
+  function scheduleNextGlimpse(stream) {
+    // More frequent — 4 to 10 seconds
+    glimpseStreams[stream] = setTimeout(() => showGlimpse(stream), 4000 + Math.random() * 6000);
+  }
+
+  function showGlimpse(stream) {
+    if (!imgs.length) { scheduleNextGlimpse(stream); return; }
+
+    const img  = imgs[Math.floor(Math.random() * imgs.length)];
+    const el   = document.createElement('canvas');
+    const gctx = el.getContext('2d');
+
+    const maxDim = Math.min(W, H) * (0.2 + Math.random() * 0.3);
+    const aspect = img.naturalWidth / img.naturalHeight || 1;
+    const gw = Math.round(aspect >= 1 ? maxDim : maxDim * aspect);
+    const gh = Math.round(aspect >= 1 ? maxDim / aspect : maxDim);
+
+    // Varying peak opacity — some very translucent, some more present
+    const peakOpacity = 0.35 + Math.random() * 0.55;
+
+    el.width  = gw * 2; // 2x for soft edge room
+    el.height = gh * 2;
+    el.style.cssText = `position:absolute;z-index:5;pointer-events:none;opacity:0;width:${gw}px;height:${gh}px;`;
+
+    const margin = 60;
+    el.style.left = `${margin + Math.random() * Math.max(10, W - gw - margin * 2)}px`;
+    el.style.top  = `${margin + Math.random() * Math.max(10, H - gh - margin * 2)}px`;
+
+    document.getElementById('artwork-screen').appendChild(el);
+
+    // Draw photo with soft vignette edges onto the canvas
+    function drawFrame(blur) {
+      gctx.clearRect(0, 0, el.width, el.height);
+
+      // Draw photo centered with padding for soft edge
+      const pad = gw * 0.15;
+      gctx.save();
+      gctx.filter = blur > 0.3 ? `blur(${blur}px)` : 'none';
+      gctx.drawImage(img, pad, pad * (gh/gw), gw * 2 - pad * 2, gh * 2 - pad * 2 * (gh/gw));
+      gctx.filter = 'none';
+      gctx.restore();
+
+      // Soft radial vignette — fades edges to transparent
+      const cx = el.width / 2, cy = el.height / 2;
+      const rad = Math.max(cx, cy) * 1.1;
+      const vgrd = gctx.createRadialGradient(cx, cy, rad * 0.45, cx, cy, rad);
+      vgrd.addColorStop(0,   'rgba(0,0,0,0)');
+      vgrd.addColorStop(0.6, 'rgba(0,0,0,0)');
+      vgrd.addColorStop(1,   'rgba(0,0,0,1)');
+      gctx.globalCompositeOperation = 'destination-out';
+      gctx.fillStyle = vgrd;
+      gctx.fillRect(0, 0, el.width, el.height);
+      gctx.globalCompositeOperation = 'source-over';
+    }
+
+    drawFrame(24);
+
+    let frame = 0, blurAmount = 24;
+    const SF = 80, HF = 100 + Math.floor(Math.random() * 80), FF = 80;
+
+    function tick() {
+      frame++;
+      if (frame <= SF) {
+        const p = frame / SF;
+        blurAmount = 24 * (1 - p * p);
+        drawFrame(blurAmount);
+        el.style.opacity = p * peakOpacity;
+      } else if (frame <= SF + HF) {
+        if (blurAmount > 0.5) { blurAmount = 0; drawFrame(0); }
+        el.style.opacity = peakOpacity;
+      } else {
+        const p = (frame - SF - HF) / FF;
+        blurAmount = 20 * p * p;
+        drawFrame(blurAmount);
+        el.style.opacity = Math.max(0, (1 - p) * peakOpacity);
+        if (p >= 1) {
+          try { el.remove(); } catch(e) {}
+          scheduleNextGlimpse(stream);
+          return;
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // ── AMBIENT SOUND — procedural drone, no audio files needed
+  let audioCtx = null;
+  let audioStarted = false;
+
+  function startAmbientSound() {
+    if (audioStarted) return;
+    audioStarted = true;
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch(e) { return; }
+
+    const master = audioCtx.createGain();
+    master.gain.setValueAtTime(0, audioCtx.currentTime);
+    master.gain.linearRampToValueAtTime(0.16, audioCtx.currentTime + 8);
+    master.connect(audioCtx.destination);
+
+    // Moody minor drone — A minor tonality
+    [
+      { f: 55,    type: 'sine',     vol: 0.4,  lfoRate: 0.03 },
+      { f: 82.4,  type: 'sine',     vol: 0.28, lfoRate: 0.041 },
+      { f: 110,   type: 'triangle', vol: 0.18, lfoRate: 0.055 },
+      { f: 130.8, type: 'triangle', vol: 0.12, lfoRate: 0.037 },
+      { f: 164.8, type: 'triangle', vol: 0.08, lfoRate: 0.062 },
+      { f: 55.3,  type: 'sine',     vol: 0.35, lfoRate: 0.028 }, // slight detune for warmth
+    ].forEach(({ f, type, vol, lfoRate }) => {
+      const osc  = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const filt = audioCtx.createBiquadFilter();
+      const lfo  = audioCtx.createOscillator();
+      const lfog = audioCtx.createGain();
+
+      osc.type = type; osc.frequency.value = f;
+      gain.gain.value = vol;
+      filt.type = 'lowpass'; filt.frequency.value = 350; filt.Q.value = 0.6;
+
+      lfo.type = 'sine'; lfo.frequency.value = lfoRate;
+      lfog.gain.value = 0.25;
+      lfo.connect(lfog); lfog.connect(gain.gain);
+
+      osc.connect(filt); filt.connect(gain); gain.connect(master);
+      osc.start(); lfo.start();
+    });
+
+    // Soft noise bed — air texture
+    const buf  = audioCtx.createBuffer(1, audioCtx.sampleRate * 3, audioCtx.sampleRate);
+    const d    = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const ns   = audioCtx.createBufferSource();
+    ns.buffer  = buf; ns.loop = true;
+    const nf   = audioCtx.createBiquadFilter();
+    nf.type    = 'bandpass'; nf.frequency.value = 180; nf.Q.value = 0.4;
+    const ng   = audioCtx.createGain();
+    ng.gain.value = 0.018;
+    ns.connect(nf); nf.connect(ng); ng.connect(master);
+    ns.start();
+
+    // Schedule ghostly audio memory echoes
+    if (window._audioMemories && window._audioMemories.length) {
+      scheduleAudioEchoes(audioCtx, master, window._audioMemories);
+    }
+  }
+
+  // ── GHOSTLY AUDIO ECHOES
+  // Recorded memories play back at low volume, heavily processed — distant, spectral
+  function scheduleAudioEchoes(actx, masterGain, audioSrcs) {
+    const pool = [...audioSrcs].sort(() => Math.random() - 0.5);
+    let idx = 0;
+
+    async function playNext() {
+      if (!audioStarted) return;
+      const src = pool[idx++ % pool.length];
+
+      try {
+        const res    = await fetch(src);
+        const arrBuf = await res.arrayBuffer();
+        const decoded = await actx.decodeAudioData(arrBuf);
+
+        const source  = actx.createBufferSource();
+        source.buffer = decoded;
+
+        // Heavy low-pass — removes clarity, makes it ghostly
+        const lpf = actx.createBiquadFilter();
+        lpf.type = 'lowpass'; lpf.frequency.value = 600; lpf.Q.value = 0.5;
+
+        // Reverb via convolver — long tail
+        const convolver = actx.createConvolver();
+        const reverbLen = actx.sampleRate * 4;
+        const reverbBuf = actx.createBuffer(2, reverbLen, actx.sampleRate);
+        for (let ch = 0; ch < 2; ch++) {
+          const d = reverbBuf.getChannelData(ch);
+          for (let i = 0; i < reverbLen; i++) {
+            d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / reverbLen, 2.5);
+          }
+        }
+        convolver.buffer = reverbBuf;
+
+        // Echo gain — very quiet, subliminal
+        const echoGain = actx.createGain();
+        echoGain.gain.setValueAtTime(0, actx.currentTime);
+        echoGain.gain.linearRampToValueAtTime(0.06, actx.currentTime + 3);
+        echoGain.gain.linearRampToValueAtTime(0.06, actx.currentTime + decoded.duration - 2);
+        echoGain.gain.linearRampToValueAtTime(0, actx.currentTime + decoded.duration + 2);
+
+        // Pitch shift via playback rate — slightly slowed for ghostly feel
+        source.playbackRate.value = 0.88 + Math.random() * 0.15;
+
+        source.connect(lpf);
+        lpf.connect(convolver);
+        convolver.connect(echoGain);
+        echoGain.connect(masterGain);
+        source.start();
+
+        // Next echo after this one ends plus a long gap
+        const gap = (decoded.duration / source.playbackRate.value) * 1000 + 15000 + Math.random() * 20000;
+        setTimeout(playNext, gap);
+
+      } catch(e) {
+        // If fetch fails, just schedule next
+        setTimeout(playNext, 20000 + Math.random() * 15000);
+      }
+    }
+
+    // Start first echo after the drone establishes
+    setTimeout(playNext, 12000 + Math.random() * 8000);
+  }
 </script>
 </body>
 </html>
