@@ -619,8 +619,9 @@
         const audioUrls = [];
         allEntries = entries; // store full entries for grid lightbox
         entries.forEach(e => e.photos.forEach(p => {
-          if (p.src && p.src.startsWith('http')) {
-            photoUrls.push(p.src);
+          if (p.src) {
+            // http URLs go into swirl pool; all photos go into grid
+            if (p.src.startsWith('http')) photoUrls.push(p.src);
             allPhotos.push({ src: p.src, narrative: p.narrative || '', author: e.author || 'Anonymous', title: e.title || '' });
           }
           if (p.narrative && p.narrative.trim()) allNarratives.push({ text: p.narrative.trim(), author: e.author || 'Anonymous' });
@@ -752,7 +753,7 @@
     const grid = document.getElementById('photoGrid');
     if (!grid) return;
     grid.style.display = 'flex';
-    if (!allPhotos.length) buildGrid();
+    buildGrid(); // always rebuild — ensures latest data
   }
 
   function closePhotoGrid() {
@@ -1007,10 +1008,21 @@
       const src = pool[idx++ % pool.length];
 
       try {
-        const res    = await fetch(src);
-        const arrBuf = await res.arrayBuffer();
-        const decoded = await actx.decodeAudioData(arrBuf);
+        // Handle both data URLs (base64) and http URLs
+        let arrBuf;
+        if (src.startsWith('data:')) {
+          // Decode base64 data URL directly — no fetch needed
+          const base64 = src.split(',')[1];
+          const binary = atob(base64);
+          const bytes  = new Uint8Array(binary.length);
+          for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+          arrBuf = bytes.buffer;
+        } else {
+          const res = await fetch(src);
+          arrBuf = await res.arrayBuffer();
+        }
 
+        const decoded = await actx.decodeAudioData(arrBuf);
         const source  = actx.createBufferSource();
         source.buffer = decoded;
 
@@ -1030,15 +1042,14 @@
         }
         convolver.buffer = reverbBuf;
 
-        // Echo gain — very quiet, subliminal
+        // Echo gain — quiet but audible
         const echoGain = actx.createGain();
         echoGain.gain.setValueAtTime(0, actx.currentTime);
-        echoGain.gain.linearRampToValueAtTime(0.06, actx.currentTime + 3);
-        echoGain.gain.linearRampToValueAtTime(0.06, actx.currentTime + decoded.duration - 2);
+        echoGain.gain.linearRampToValueAtTime(0.12, actx.currentTime + 2);
+        echoGain.gain.linearRampToValueAtTime(0.12, actx.currentTime + decoded.duration - 1);
         echoGain.gain.linearRampToValueAtTime(0, actx.currentTime + decoded.duration + 2);
 
-        // Pitch shift via playback rate — slightly slowed for ghostly feel
-        source.playbackRate.value = 0.88 + Math.random() * 0.15;
+        source.playbackRate.value = 0.85 + Math.random() * 0.15;
 
         source.connect(lpf);
         lpf.connect(convolver);
@@ -1046,13 +1057,14 @@
         echoGain.connect(masterGain);
         source.start();
 
-        // Next echo after this one ends plus a long gap
-        const gap = (decoded.duration / source.playbackRate.value) * 1000 + 15000 + Math.random() * 20000;
+        console.log('[Work audio] Playing memory, duration:', Math.round(decoded.duration) + 's');
+
+        const gap = (decoded.duration / source.playbackRate.value) * 1000 + 8000 + Math.random() * 12000;
         setTimeout(playNext, gap);
 
       } catch(e) {
-        // If fetch fails, just schedule next
-        setTimeout(playNext, 20000 + Math.random() * 15000);
+        console.warn('[Work audio] Failed:', e.message);
+        setTimeout(playNext, 10000 + Math.random() * 8000);
       }
     }
 
