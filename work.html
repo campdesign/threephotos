@@ -246,7 +246,21 @@
       position: relative; max-width: min(800px, 92vw);
       display: flex; flex-direction: column; gap: 20px;
     }
-    .grid-lb-close {
+    .grid-lb-entry-header {
+      text-align: center; margin-bottom: 8px;
+    }
+    .grid-lb-title {
+      font-family: var(--serif); font-size: clamp(20px, 2.5vw, 28px);
+      font-weight: 300; color: var(--white); margin-bottom: 6px;
+    }
+    .grid-lb-photos {
+      display: flex; flex-direction: column; gap: 32px;
+      max-height: 72vh; overflow-y: auto; padding-right: 4px;
+    }
+    .grid-lb-photo-wrap img {
+      width: 100%; height: auto; display: block;
+      filter: brightness(0.9);
+    }
       position: absolute; top: -40px; right: 0;
       background: none; border: none; cursor: pointer;
       color: var(--muted); font-size: 18px; transition: color 0.2s;
@@ -356,7 +370,7 @@
   // ── BLOB SYSTEM
   // Each blob is a large, soft, organic form carrying color from the photos
   // They move slowly, overlap, and blend — ink in water
-  const BLOB_COUNT = 18;
+  const BLOB_COUNT = 24;
   let blobs = [];
 
   function initBlobs() {
@@ -474,7 +488,7 @@
 
   // ── PHOTO FRAGMENT LAYER
   // Slow large photo fragments drifting across the screen, heavily blurred
-  const FRAGMENT_COUNT = 8;
+  const FRAGMENT_COUNT = 16;
   let fragments = [];
 
   function initFragments() {
@@ -603,6 +617,7 @@
 
         const photoUrls = [];
         const audioUrls = [];
+        allEntries = entries; // store full entries for grid lightbox
         entries.forEach(e => e.photos.forEach(p => {
           if (p.src && p.src.startsWith('http')) {
             photoUrls.push(p.src);
@@ -614,9 +629,11 @@
         // Store audio for echoes — triggered when sound starts
         if (audioUrls.length) window._audioMemories = audioUrls.slice(0, 20);
 
-        // Load a spread of photos
-        const step = Math.max(1, Math.floor(photoUrls.length / 20));
-        const selected = photoUrls.filter((_, i) => i % step === 0).slice(0, 20);
+        // Load all photos — more = richer swirl
+        // Cap at 60 to keep performance reasonable; spread evenly if more
+        const maxImgs = 60;
+        const step = photoUrls.length > maxImgs ? Math.floor(photoUrls.length / maxImgs) : 1;
+        const selected = photoUrls.filter((_, i) => i % step === 0).slice(0, maxImgs);
         imgs = await loadImages(selected);
         palette = sampleColors(imgs);
         palette.sort(() => Math.random() - 0.5);
@@ -743,30 +760,69 @@
     if (grid) grid.style.display = 'none';
   }
 
+  // allEntries for grid — full entries not just photos
+  let allEntries = [];
+
   function buildGrid() {
     const body = document.getElementById('gridBody');
     const countEl = document.getElementById('gridCount');
     if (!body) return;
-
     if (countEl) countEl.textContent = allPhotos.length;
 
+    // Show all photos as individual tiles
     body.innerHTML = allPhotos.map((p, i) => `
       <div class="grid-item" onclick="openGridLightbox(${i})">
         <img src="${p.src}" alt="" loading="lazy" />
         <div class="grid-item-overlay">
-          <p class="grid-item-text">${p.narrative ? '"' + p.narrative + '"' : ''}</p>
+          <p class="grid-item-text">${p.narrative ? '&ldquo;' + p.narrative.slice(0,80) + (p.narrative.length > 80 ? '&hellip;' : '') + '&rdquo;' : ''}</p>
         </div>
       </div>
     `).join('');
   }
 
   function openGridLightbox(idx) {
-    const p  = allPhotos[idx];
+    const p = allPhotos[idx];
     if (!p) return;
-    document.getElementById('gridLbImg').src         = p.src;
-    document.getElementById('gridLbNarrative').textContent = p.narrative ? '"' + p.narrative + '"' : '';
-    document.getElementById('gridLbAttrib').textContent    = [p.author, p.title].filter(Boolean).join(' — ');
-    document.getElementById('gridLightbox').style.display  = 'flex';
+
+    // Find the full entry this photo belongs to
+    const entry = allEntries.find(e =>
+      e.photos && e.photos.some(ep => ep.src === p.src)
+    );
+
+    const lb = document.getElementById('gridLightbox');
+    const inner = document.querySelector('.grid-lb-inner');
+
+    if (entry && entry.photos && entry.photos.length > 1) {
+      // Show full submission — all photos with narratives
+      inner.innerHTML = `
+        <button class="grid-lb-close" onclick="closeGridLightbox()">&#10005;</button>
+        <div class="grid-lb-entry-header">
+          <p class="grid-lb-title">${entry.title || ''}</p>
+          <p class="grid-lb-attrib" id="gridLbAttrib">${entry.author || 'Anonymous'} &nbsp;·&nbsp; ${entry.date || ''}</p>
+        </div>
+        <div class="grid-lb-photos">
+          ${entry.photos.map(photo => `
+            <div class="grid-lb-photo-wrap">
+              <img src="${photo.src}" alt="" style="width:100%;height:auto;display:block;" />
+              ${photo.narrative ? `<p class="grid-lb-narrative">&ldquo;${photo.narrative}&rdquo;</p>` : ''}
+              ${photo.audio ? `<audio controls src="${photo.audio}" style="width:100%;margin-top:8px;opacity:0.6;"></audio>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } else {
+      // Single photo fallback
+      inner.innerHTML = `
+        <button class="grid-lb-close" onclick="closeGridLightbox()">&#10005;</button>
+        <img src="${p.src}" alt="" style="width:100%;height:auto;max-height:70vh;object-fit:contain;display:block;" />
+        <div class="grid-lb-meta">
+          <p class="grid-lb-narrative">${p.narrative ? '&ldquo;' + p.narrative + '&rdquo;' : ''}</p>
+          <p class="grid-lb-attrib">${[p.author, p.title].filter(Boolean).join(' — ')}</p>
+        </div>
+      `;
+    }
+
+    lb.style.display = 'flex';
   }
 
   function closeGridLightbox() {
@@ -928,10 +984,16 @@
     ns.connect(nf); nf.connect(ng); ng.connect(master);
     ns.start();
 
-    // Schedule ghostly audio memory echoes
-    if (window._audioMemories && window._audioMemories.length) {
-      scheduleAudioEchoes(audioCtx, master, window._audioMemories);
-    }
+    // Schedule ghostly audio memory echoes — use stored or wait for them
+    const startEchoes = () => {
+      if (window._audioMemories && window._audioMemories.length) {
+        scheduleAudioEchoes(audioCtx, master, window._audioMemories);
+      } else {
+        // Check again in a few seconds in case data is still loading
+        setTimeout(startEchoes, 3000);
+      }
+    };
+    setTimeout(startEchoes, 2000);
   }
 
   // ── GHOSTLY AUDIO ECHOES

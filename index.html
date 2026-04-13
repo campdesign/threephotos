@@ -2348,15 +2348,18 @@
     const cx = W / 2, cy = H / 2;
 
     const photoData = [];
+    const audioData = [];
     entries.forEach(e => e.photos.forEach(p => {
       if (p.src) photoData.push({ src: p.src, narrative: p.narrative || '', author: e.author || '' });
+      if (p.audio && p.audio.startsWith('data:audio')) audioData.push(p.audio);
     }));
 
-    if (!photoData.length) { showCorridorText(); return; }
+    if (!photoData.length) { showCorridorText(audioData); return; }
 
+    // Load ALL photos — the more the denser the corridor
     let loaded = 0;
     const imgs = [];
-    const toLoad = photoData.slice(0, 40);
+    const toLoad = photoData; // no limit — use everything
 
     toLoad.forEach((d) => {
       const img = new Image();
@@ -2364,14 +2367,14 @@
       img.onload = img.onerror = () => {
         if (img.naturalWidth > 0) imgs.push({ img, ...d });
         loaded++;
-        if (loaded === toLoad.length) startCorridor(ctx, canvas, W, H, cx, cy, imgs);
+        if (loaded === toLoad.length) startCorridor(ctx, canvas, W, H, cx, cy, imgs, audioData);
       };
       img.src = d.src;
     });
   }
 
-  function startCorridor(ctx, canvas, W, H, cx, cy, photoImgs) {
-    if (!photoImgs.length) { showCorridorText(); return; }
+  function startCorridor(ctx, canvas, W, H, cx, cy, photoImgs, audioData) {
+    if (!photoImgs.length) { showCorridorText(audioData || []); return; }
 
     let progress = 0;
     let speed    = 0.0008;
@@ -2420,13 +2423,17 @@
 
           const sideX  = cx + p.side * (cx * 0.62 + (relZ < 0 ? Math.abs(relZ) * W * 1.8 : 0));
           const drawW  = p.width * scale;
-          const drawH  = drawW * 0.72;
+          // Use natural aspect ratio — no squishing
+          const nat    = p.img.naturalWidth && p.img.naturalHeight
+            ? p.img.naturalWidth / p.img.naturalHeight : 1.33;
+          const drawH  = drawW / nat;
           const drawY  = cy + p.offsetY * (1 - Math.min(1, scale * 0.25)) - drawH / 2;
           const drawX  = sideX - drawW / 2;
           const blurPx = relZ < 0 ? 8 + Math.abs(relZ) * 28 : Math.max(0, relZ * 18 - 1.5);
+          // Translucent — max 0.7 alpha so they feel ghostly
           const alpha  = relZ < 0
-            ? Math.max(0, 0.45 - Math.abs(relZ) * 3.5)
-            : Math.min(0.92, 1 - relZ * 1.1);
+            ? Math.max(0, 0.35 - Math.abs(relZ) * 3.0)
+            : Math.min(0.70, (1 - relZ * 1.1) * 0.75);
 
           if (alpha < 0.01) return;
 
@@ -2464,7 +2471,7 @@
           ctx.fillStyle = `rgba(10,10,11,0.02)`;
           ctx.fillRect(0, 0, W, H);
           if (fo < 1) requestAnimationFrame(fadeOut);
-          else showCorridorText();
+          else showCorridorText(audioData || []);
         }
         fadeOut();
         return;
@@ -2474,21 +2481,30 @@
     render();
   }
 
-  function showCorridorText() {
+  function showCorridorText(audioData) {
     const cloud = document.getElementById('wordCloud');
     if (!cloud) return;
 
+    // Start playing recorded memories as ghostly echoes during word cloud
+    if (audioData && audioData.length) {
+      playCorridorAudio(audioData);
+    }
+
     // Words that drift up — varying sizes for dramatic scale contrast
     const words = [
-      { text: 'One hundred',        size: 'clamp(13px,1.8vw,18px)', weight: 300, delay: 0,    italic: false },
-      { text: 'photographs.',       size: 'clamp(52px,9vw,110px)',  weight: 300, delay: 400,  italic: false },
-      { text: 'One hundred',        size: 'clamp(13px,1.8vw,18px)', weight: 300, delay: 1200, italic: false },
-      { text: 'stories.',           size: 'clamp(40px,7vw,88px)',   weight: 300, delay: 1600, italic: true  },
-      { text: 'chosen carefully.',  size: 'clamp(11px,1.4vw,15px)', weight: 300, delay: 2600, italic: true  },
-      { text: 'The collective',     size: 'clamp(14px,2vw,20px)',   weight: 300, delay: 3400, italic: false },
-      { text: 'has spoken.',        size: 'clamp(44px,8vw,96px)',   weight: 300, delay: 3900, italic: false },
-      { text: 'Something',          size: 'clamp(11px,1.3vw,14px)', weight: 300, delay: 5200, italic: true  },
-      { text: 'has been made.',     size: 'clamp(32px,5.5vw,72px)', weight: 300, delay: 5600, italic: false },
+      { text: 'One hundred',        size: 'clamp(15px,2vw,22px)',    weight: 300, delay: 0,    italic: false },
+      { text: 'photographs.',       size: 'clamp(64px,11vw,140px)',  weight: 300, delay: 350,  italic: false },
+      { text: 'given carefully.',   size: 'clamp(12px,1.5vw,17px)',  weight: 300, delay: 900,  italic: true  },
+      { text: 'One hundred',        size: 'clamp(15px,2vw,22px)',    weight: 300, delay: 1400, italic: false },
+      { text: 'stories.',           size: 'clamp(52px,9vw,116px)',   weight: 300, delay: 1800, italic: true  },
+      { text: 'Every memory.',      size: 'clamp(13px,1.6vw,19px)',  weight: 300, delay: 2600, italic: true  },
+      { text: 'Every moment',       size: 'clamp(13px,1.6vw,19px)',  weight: 300, delay: 2900, italic: false },
+      { text: 'that mattered.',     size: 'clamp(36px,6vw,80px)',    weight: 300, delay: 3200, italic: false },
+      { text: 'The collective',     size: 'clamp(15px,2vw,22px)',    weight: 300, delay: 4200, italic: false },
+      { text: 'has spoken.',        size: 'clamp(56px,10vw,124px)',  weight: 300, delay: 4700, italic: false },
+      { text: 'Something',          size: 'clamp(12px,1.4vw,16px)',  weight: 300, delay: 6000, italic: true  },
+      { text: 'has been made.',     size: 'clamp(44px,7.5vw,96px)',  weight: 300, delay: 6400, italic: false },
+      { text: 'from all of it.',    size: 'clamp(12px,1.4vw,16px)',  weight: 300, delay: 7200, italic: true  },
     ];
 
     let lastWordTime = 0;
@@ -2555,6 +2571,70 @@
     setTimeout(() => {
       window.location.href = MILESTONE_URL;
     }, lastWordTime + 2000);
+  }
+
+  // ─── CORRIDOR AUDIO — plays recorded memories as ghostly echoes
+  function playCorridorAudio(audioSrcs) {
+    if (!audioSrcs.length) return;
+    try {
+      const actx   = new (window.AudioContext || window.webkitAudioContext)();
+      const master = actx.createGain();
+      master.gain.setValueAtTime(0, actx.currentTime);
+      master.gain.linearRampToValueAtTime(0.12, actx.currentTime + 3);
+      master.connect(actx.destination);
+
+      const pool = [...audioSrcs].sort(() => Math.random() - 0.5);
+      let idx = 0;
+
+      async function playNext() {
+        const src = pool[idx++ % pool.length];
+        try {
+          // Convert data URL to array buffer
+          const base64 = src.split(',')[1];
+          const binary  = atob(base64);
+          const bytes   = new Uint8Array(binary.length);
+          for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+
+          const decoded = await actx.decodeAudioData(bytes.buffer);
+          const source  = actx.createBufferSource();
+          source.buffer = decoded;
+          source.playbackRate.value = 0.85 + Math.random() * 0.15; // slightly slowed
+
+          // Heavy low-pass for ghostly effect
+          const lpf = actx.createBiquadFilter();
+          lpf.type = 'lowpass'; lpf.frequency.value = 800; lpf.Q.value = 0.6;
+
+          // Long reverb tail
+          const conv    = actx.createConvolver();
+          const revLen  = actx.sampleRate * 3;
+          const revBuf  = actx.createBuffer(2, revLen, actx.sampleRate);
+          for (let ch = 0; ch < 2; ch++) {
+            const d = revBuf.getChannelData(ch);
+            for (let i = 0; i < revLen; i++) d[i] = (Math.random()*2-1) * Math.pow(1-i/revLen, 2.2);
+          }
+          conv.buffer = revBuf;
+
+          const gain = actx.createGain();
+          gain.gain.setValueAtTime(0, actx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.09, actx.currentTime + 2);
+          gain.gain.linearRampToValueAtTime(0.09, actx.currentTime + decoded.duration * 0.8);
+          gain.gain.linearRampToValueAtTime(0, actx.currentTime + decoded.duration + 1.5);
+
+          source.connect(lpf); lpf.connect(conv); conv.connect(gain); gain.connect(master);
+          source.start();
+
+          // Schedule next after gap
+          const gap = (decoded.duration / source.playbackRate.value) * 1000 + 8000 + Math.random() * 10000;
+          setTimeout(playNext, gap);
+        } catch(e) {
+          setTimeout(playNext, 10000);
+        }
+      }
+
+      // Start first voice after a short delay
+      setTimeout(playNext, 2000);
+
+    } catch(e) { console.warn('Corridor audio failed:', e); }
   }
 
   function runScatterAnimation(srcs) {
